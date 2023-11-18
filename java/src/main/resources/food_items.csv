@@ -1,0 +1,20 @@
+name,nutritions,ingredients
+apple,52
+potato,71
+tomato,21
+cucumber,12
+sugar,387
+salt,0
+flour,364
+water,0
+cheese,402
+onion,40
+egg,155
+cooking oil,884
+milk,42
+butter,717
+paprika,40
+noodles,287,flour_300 salt_3 egg_220 oil_10
+mashed potatoes,71,potato_800 milk_200 butter_10 salt_3
+
+
