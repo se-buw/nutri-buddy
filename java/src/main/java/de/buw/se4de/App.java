@@ -6,12 +6,16 @@ package de.buw.se4de;
 // Importing Stuff
 import java.io.IOException;
 import java.io.Reader;
+import java.io.BufferedWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Scanner;
 
+// CVS Manipulation
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 
 // JavaFX
@@ -20,47 +24,83 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 
 // ---------------------------------------------------------------------------------------
 
 public class App extends Application {
-	public String getGreeting() {
+	
+// ---------------------------------------------------------------------------------------
+	// Constants:
+	private static final String accountCsvFile = "src/main/resources/accounts.csv";
+	private static final String foodItemCsvFile = "src/main/resources/food_item.csv";
+
+	// -----------------------------------------------------------------------------------
+	
+	public static String getGreeting() {
+		// Returns all names from the csv file
 		String result = "";
-		try (Reader reader = Files.newBufferedReader(Paths.get("src/main/resources/book.csv"));
+		try (Reader reader = Files.newBufferedReader(Paths.get(accountCsvFile));
 				@SuppressWarnings("deprecation")
 				CSVParser csvParser = new CSVParser(reader,
 						CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());) {
 			for (CSVRecord csvRecord : csvParser) {
-				String name = csvRecord.get("author");
+				String name = csvRecord.get("name");
 				result += "Hello " + name + "!\n";
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		System.out.println("Enter your name:");
-		Scanner scanner = new Scanner(System.in);
-		String inputString = scanner.nextLine();
-		System.out.println("Hello " + inputString + "!");
-		scanner.close();
-
+		
 		return result;
 	}
-
 	
+	// -----------------------------------------------------------------------------------
+
+	public static void addAccount(String account) {
+		// Adds a new account record to the accounts csv
+		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(accountCsvFile), StandardOpenOption.APPEND);
+				@SuppressWarnings("deprecation")
+				CSVPrinter csvPrinter = new CSVPrinter(writer,
+						CSVFormat.DEFAULT.withFirstRecordAsHeader());) {
+			
+			// Add record
+			String[] accountData = account.split(",");
+			// TODO Leerzeichen müssen noch aus den Strings raus, die in die records gehen
+			csvPrinter.printRecord(accountData[0], accountData[1], accountData[2], accountData[3], accountData[4], accountData[5]);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	// -----------------------------------------------------------------------------------
+
 	@Override
     public void start(Stage stage) {
-        String javaVersion = System.getProperty("java.version");
-        String javafxVersion = System.getProperty("javafx.version");
-        Label label = new Label("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
-        Scene scene = new Scene(new StackPane(label), 640, 480);
+		
+		// Create scene contents
+		String s = getGreeting();
+        Label label = new Label("Test: \n" + s);
+        
+        TextField accountInput = new TextField("");
+        accountInput.setOnAction(e->{
+        	String inputValue = accountInput.getText();
+        	addAccount(inputValue);
+        });
+        
+        // Create scene
+        Scene scene = new Scene(new StackPane(label, accountInput), 640, 480);
+        
         stage.setScene(scene);
         stage.show();
     }
 
+	// -----------------------------------------------------------------------------------
+
     public static void main(String[] args) {
         launch();
-        System.out.println(new App().getGreeting());
     }
 }
