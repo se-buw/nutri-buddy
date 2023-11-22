@@ -22,7 +22,10 @@ import org.apache.commons.csv.CSVRecord;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
@@ -35,55 +38,48 @@ public class App extends Application {
 	// Constants:
 	private static final String accountCsvFile = "src/main/resources/accounts.csv";
 	private static final String foodItemCsvFile = "src/main/resources/food_item.csv";
-
-	// -----------------------------------------------------------------------------------
-	
-	public static String getGreeting() {
-		// Returns all names from the csv file
-		String result = "";
-		try (Reader reader = Files.newBufferedReader(Paths.get(accountCsvFile));
-				@SuppressWarnings("deprecation")
-				CSVParser csvParser = new CSVParser(reader,
-						CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());) {
-			for (CSVRecord csvRecord : csvParser) {
-				String name = csvRecord.get("name");
-				result += "Hello " + name + "!\n";
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return result;
-	}
-	
-	// -----------------------------------------------------------------------------------
-
-	public static void addAccount(String account) {
-		// Adds a new account record to the accounts csv
-		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(accountCsvFile), StandardOpenOption.APPEND);
-				@SuppressWarnings("deprecation")
-				CSVPrinter csvPrinter = new CSVPrinter(writer,
-						CSVFormat.DEFAULT.withFirstRecordAsHeader());) {
-			
-			// Add record
-			String[] accountData = account.split(",");
-			// TODO Leerzeichen müssen noch aus den Strings raus, die in die records gehen
-			csvPrinter.printRecord(accountData[0], accountData[1], accountData[2], accountData[3], accountData[4], accountData[5]);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	private static final int screenSizeX = 1000;
+	private static final int screenSizeY = 800;
 
 	// -----------------------------------------------------------------------------------
 
 	@Override
     public void start(Stage stage) {
+		// Create Panes
+		Pane mainMenuPane = new VBox();
+		Pane accountPane = new VBox();
+		Pane homePane = new VBox();
+		Pane recipiesPane = new VBox();
 		
-		// Create scene contents
-		String s = getGreeting();
-        Label label = new Label("Test: \n" + s);
+		
+		// Create Scenes
+		Scene mainMenuScene = new Scene(mainMenuPane, screenSizeX, screenSizeY);
+        Scene accountScene = new Scene(accountPane, screenSizeX, screenSizeY);
+        Scene homeScene = new Scene(homePane, screenSizeX, screenSizeY);
+        Scene recipiesScene = new Scene(recipiesPane, screenSizeX, screenSizeY);
+
+        
+		// Create scene contents for mainMenuScene
+		Button switchSceneMainMenu2AccountBtn = new Button("Switch Scene to Account");
+		switchSceneMainMenu2AccountBtn.setOnAction(e->{
+			stage.setScene(accountScene);
+		});
+		
+		mainMenuPane.getChildren().addAll(switchSceneMainMenu2AccountBtn) ;
+        
+		
+        // Create scene contents for accountScene
+		Button switchSceneAccounts2MainMenuBtn = new Button("Switch Scene to MainMenu");
+		switchSceneAccounts2MainMenuBtn.setOnAction(e->{
+			stage.setScene(mainMenuScene);
+		});
+		Button switchSceneAccount2HomeBtn = new Button("Switch Scene to Home");
+		switchSceneAccount2HomeBtn.setOnAction(e->{
+			stage.setScene(homeScene);
+		});
+		
+		String s = readAccount();
+        Label labelTest = new Label("Test: \n" + s);
         
         TextField accountInput = new TextField("");
         accountInput.setOnAction(e->{
@@ -91,10 +87,21 @@ public class App extends Application {
         	addAccount(inputValue);
         });
         
-        // Create scene
-        Scene scene = new Scene(new StackPane(label, accountInput), 640, 480);
+        accountPane.getChildren().addAll(switchSceneAccounts2MainMenuBtn, switchSceneAccount2HomeBtn,
+        		labelTest, accountInput);
         
-        stage.setScene(scene);
+        
+        // Create scene contents for homeScene
+        Button switchSceneHome2MainMenuBtn = new Button("Switch Scene to MainMenu");
+        switchSceneHome2MainMenuBtn.setOnAction(e->{
+			stage.setScene(mainMenuScene);
+		});
+        
+        homePane.getChildren().addAll(switchSceneHome2MainMenuBtn);
+		
+        
+        // Set scene
+        stage.setScene(mainMenuScene);
         stage.show();
     }
 
@@ -103,4 +110,51 @@ public class App extends Application {
     public static void main(String[] args) {
         launch();
     }
+    
+    // -----------------------------------------------------------------------------------
+	
+ 	public static String readAccount() {
+ 		// Returns all names from the csv file
+ 		String result = "";
+ 		try (Reader reader = Files.newBufferedReader(Paths.get(accountCsvFile));
+ 				@SuppressWarnings("deprecation")
+ 				CSVParser csvParser = new CSVParser(reader,
+ 						CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());) {
+ 			
+ 			// Reading
+ 			for (CSVRecord csvRecord : csvParser) {
+ 				String name = csvRecord.get("name");
+ 				result += "Hello " + name + "!\n";
+ 			}
+ 			
+ 			csvParser.close();
+ 			reader.close();
+ 		} catch (IOException e) {
+ 			// TODO Auto-generated catch block
+ 			e.printStackTrace();
+ 		}
+ 		
+ 		return result;
+ 	}
+ 	
+ 	// -----------------------------------------------------------------------------------
+
+ 	public static void addAccount(String account) {
+ 		// Adds a new account record to the accounts csv
+ 		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(accountCsvFile), StandardOpenOption.APPEND);
+ 				@SuppressWarnings("deprecation")
+ 				CSVPrinter csvPrinter = new CSVPrinter(writer,
+ 						CSVFormat.DEFAULT.withFirstRecordAsHeader());) {
+ 			
+ 			// Add record after removing leading and trailing spaces
+ 			String[] accountData = account.split(",");
+ 			csvPrinter.printRecord(accountData[0].strip(), accountData[1].strip(), accountData[2].strip(), accountData[3].strip(), accountData[4].strip(), accountData[5].strip());
+ 			
+ 			csvPrinter.close();
+ 			writer.close();
+ 			
+ 		} catch (IOException e) {
+ 			e.printStackTrace();
+ 		}
+ 	}
 }
