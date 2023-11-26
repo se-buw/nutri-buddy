@@ -1,7 +1,10 @@
 /*
- * Ferdinand Brand, Noah Erthel
+ * Group A
  * 
  * Sources:
+ * https://www.callicoder.com/java-read-write-csv-file-apache-commons-csv/
+ * https://www.geeksforgeeks.org/ways-to-read-input-from-console-in-java/
+ * https://stackoverflow.com/questions/4397907/updating-specific-cell-csv-file-using-java
  * for Logo: https:
  * //deepai.org/machine-learning-model/logo-generator
  * for Nutri Score:
@@ -18,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 // CVS Manipulation
 import org.apache.commons.csv.CSVFormat;
@@ -27,6 +31,7 @@ import org.apache.commons.csv.CSVRecord;
 
 // JavaFX
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -42,6 +47,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.control.ListView;
+import javafx.collections.*;
 
 // ---------------------------------------------------------------------------------------
 
@@ -50,13 +57,14 @@ public class App extends Application {
 // ---------------------------------------------------------------------------------------
 	// Constants:
 	private static final String accountCsvFile = "src/main/resources/accounts.csv";
-	private static final String foodItemCsvFile = "src/main/resources/food_item.csv";
+	private static final String foodItemCsvFile = "src/main/resources/food_items.csv";
 	private static final int 	screenSizeX = 1000;
 	private static final int 	screenSizeY = 800;
 	private static final int 	topPanelSizeY = 100;
 	private static final String mainPaneColor = "-fx-background-color: rgba(252, 255, 255, 1);";
 	private static final String topPaneColor = "-fx-background-color: rgba(181, 245, 157, 1);";
 	private static final int 	normalVBoxSpacingY = 30;
+	private static final int 	smallVBoxSpacingY = 2;
 	private static final int 	normalHBoxSpacingX = 15;
 	private static		 int	loggedInAccountIndex = -1;
 
@@ -72,6 +80,11 @@ public class App extends Application {
 	VBox accountPaneTop = new VBox(normalVBoxSpacingY);
 	VBox accountPaneCen = new VBox(normalVBoxSpacingY);
 	HBox accountPaneBot = new HBox(normalHBoxSpacingX);
+	
+	VBox accountEditPane = new VBox(normalVBoxSpacingY);
+	VBox accountEditPaneTop = new VBox(normalVBoxSpacingY);
+	VBox accountEditPaneCen = new VBox(smallVBoxSpacingY);
+	HBox accountEditPaneBot = new HBox(normalHBoxSpacingX);
 
 	VBox homePane = new VBox(normalVBoxSpacingY);
 	VBox homePaneTop = new VBox(normalVBoxSpacingY);
@@ -80,12 +93,13 @@ public class App extends Application {
 
 	VBox recipiesPane = new VBox(normalVBoxSpacingY);
 	VBox recipiesPaneTop = new VBox(normalVBoxSpacingY);
-	VBox recipiesPaneCen = new VBox(normalVBoxSpacingY);
+	VBox recipiesPaneCen = new VBox(smallVBoxSpacingY);
 	HBox recipiesPaneBot = new HBox(normalHBoxSpacingX);
 	
 	// Declare Scenes
 	Scene mainMenuScene = new Scene(mainMenuPane, screenSizeX, screenSizeY);
     Scene accountScene = new Scene(accountPane, screenSizeX, screenSizeY);
+    Scene accountEditScene = new Scene(accountEditPane, screenSizeX, screenSizeY);
     Scene homeScene = new Scene(homePane, screenSizeX, screenSizeY);
     Scene recipiesScene = new Scene(recipiesPane, screenSizeX, screenSizeY);
 	
@@ -95,20 +109,39 @@ public class App extends Application {
  	Label loginInstructionsLabel = new Label();
 	Label loginFeedbackLabel = new Label();
 	Label loginLabel = new Label();
-	Label bmiLabel = new Label();
+	Label accountListExplanationLabel = new Label();
 	TextField accountLogin = new TextField();
-
+	ListView<String> accountsList = new ListView<String>();
 
     // Declare Content for AccountsScene
 	Button switchSceneAccounts2MainMenuBtn = new Button();
-	Button switchSceneAccounts2HomeBtn = new Button();
 	Label accountsHeaderLabel = new Label();
     Label accountsAddingExplanation = new Label();
     TextField accountInput = new TextField();
     Label accountsAddingFeedback = new Label();
 
+    // Declare Content for AccountsEditScene
+ 	Button switchSceneAccountsEdit2HomeBtn = new Button();
+ 	Label accountsEditHeaderLabel = new Label();
+    Label accountsEditAddingExplanation = new Label();
+    Label accountsEditAddingNameLabel = new Label();
+    TextField accountEditInputName = new TextField();
+    Label accountsEditAddingNameFeedback = new Label();
+    Label accountsEditAddingHeightLabel = new Label();
+    TextField accountEditInputHeight = new TextField();
+    Label accountsEditAddingHeightFeedback = new Label();
+    Label accountsEditAddingGenderLabel = new Label();
+    TextField accountEditInputGender = new TextField();
+    Label accountsEditAddingGenderFeedback = new Label();
+    Label accountsEditAddingWeightLabel = new Label();
+    TextField accountEditInputWeight = new TextField();
+    Label accountsEditAddingWeightFeedback = new Label();
+    Label accountsEditAddingGoalWeightLabel = new Label();
+    TextField accountEditInputGoalWeight = new TextField();
+    Label accountsEditAddingGoalWeightFeedback = new Label();
+    
     // Declare Content for HomeScene
-    Button switchSceneHome2AccountsBtn = new Button();
+    Button switchSceneHome2AccountsEditBtn = new Button();
     Button switchSceneHome2RecipiesBtn = new Button();
     Label homeHeaderLabel = new Label();
     Label homeBMILabel = new Label();
@@ -117,8 +150,16 @@ public class App extends Application {
     // Declare Content for RecipiesScene
     Button switchSceneRecipies2HomeBtn = new Button();
     Label recipiesHeaderLabel = new Label();
+    ListView<String> foodItemList = new ListView<String>();
+    Label recipyAddingFoodExplanationLabel = new Label();
+    TextField recipyAddingFood = new TextField();
+    Label recipyAddingFoodFeedbackLabel = new Label();
+    Label recipyAddingRecipyExplanationLabel = new Label();
+    TextField recipyAddingRecipy = new TextField();
+    Label recipyAddingRecipyFeedbackLabel = new Label();
 
-	
+	// -----------------------------------------------------------------------------------
+
 	@Override
     public void start(Stage stage)
 	{
@@ -128,7 +169,7 @@ public class App extends Application {
 		mainMenuPaneTop.setAlignment(Pos.CENTER);
 		mainMenuPaneCen.setAlignment(Pos.CENTER);
 		mainMenuPaneBot.setAlignment(Pos.CENTER);
-		mainMenuPane.setMargin(mainMenuPaneBot, new javafx.geometry.Insets(400, 0, 0, 0));
+		mainMenuPane.setMargin(mainMenuPaneBot, new javafx.geometry.Insets(200, 0, 0, 0));
 
 		accountPane.getChildren().addAll(accountPaneTop, accountPaneCen, accountPaneBot);
 		accountPaneTop.setPrefSize(300, topPanelSizeY);
@@ -136,6 +177,13 @@ public class App extends Application {
 		accountPaneCen.setAlignment(Pos.CENTER);
 		accountPaneBot.setAlignment(Pos.CENTER);
 		accountPane.setMargin(accountPaneBot, new javafx.geometry.Insets(400, 0, 0, 0));
+		
+		accountEditPane.getChildren().addAll(accountEditPaneTop, accountEditPaneCen, accountEditPaneBot);
+		accountEditPaneTop.setPrefSize(300, topPanelSizeY);
+		accountEditPaneTop.setAlignment(Pos.CENTER);
+		accountEditPaneCen.setAlignment(Pos.CENTER);
+		accountEditPaneBot.setAlignment(Pos.CENTER);
+		accountEditPane.setMargin(accountEditPaneBot, new javafx.geometry.Insets(100, 0, 0, 0));
 		
 		homePane.getChildren().addAll(homePaneTop, homePaneCen, homePaneBot);
 		homePaneTop.setPrefSize(300, topPanelSizeY);
@@ -149,7 +197,7 @@ public class App extends Application {
 		recipiesPaneTop.setAlignment(Pos.CENTER);
 		recipiesPaneCen.setAlignment(Pos.CENTER);
 		recipiesPaneBot.setAlignment(Pos.CENTER);
-		recipiesPane.setMargin(recipiesPaneBot, new javafx.geometry.Insets(400, 0, 0, 0));
+		recipiesPane.setMargin(recipiesPaneBot, new javafx.geometry.Insets(0, 0, 0, 0));
 		
 		// Changes pane colors 
 		mainMenuPane.setStyle(mainPaneColor);
@@ -157,7 +205,10 @@ public class App extends Application {
 		
 		accountPane.setStyle(mainPaneColor);
 		accountPaneTop.setStyle(topPaneColor);
-
+		
+		accountEditPane.setStyle(mainPaneColor);
+		accountEditPaneTop.setStyle(topPaneColor);
+		
 		homePane.setStyle(mainPaneColor);
 		homePaneTop.setStyle(topPaneColor);
 
@@ -181,6 +232,8 @@ public class App extends Application {
 		loginInstructionsLabel.setFont(Font.font("Standart", 16d));
 		loginFeedbackLabel.setText("");
 		loginFeedbackLabel.setFont(Font.font("Standart", 16d));
+		accountListExplanationLabel.setText("Existing accounts:");
+		accountListExplanationLabel.setFont(Font.font("Standart", 16d));
 
 		// Input for login
 		accountLogin.setFont(Font.font("Standart", 16d));
@@ -194,21 +247,23 @@ public class App extends Application {
         		accountLogin.setText("");
         		loginFeedbackLabel.setText("Account not found");
         		loggedInAccountIndex = -1;
-        		updateAccountScene();
         	}
         	else
         	{
         		accountLogin.setText("");
         		loggedInAccountIndex = index;
-        		updateAccountScene();
         		updateHomeScene();
         		stage.setScene(homeScene);
         	}
         });
 		accountLogin.setMaxWidth(400);
-		
+		// ListView
+		accountsList.setItems(readAllAccounts("name"));
+		accountsList.setMaxWidth(400);
+		accountsList.setMaxHeight(100);
+
 		mainMenuPaneTop.getChildren().addAll(mainMenuHeaderLabel);
-		mainMenuPaneCen.getChildren().addAll(loginInstructionsLabel, accountLogin, loginFeedbackLabel);
+		mainMenuPaneCen.getChildren().addAll(loginInstructionsLabel, accountLogin, loginFeedbackLabel, accountListExplanationLabel, accountsList);
 		mainMenuPaneBot.getChildren().addAll(switchSceneMainMenu2AccountBtn);
         
 		// -----------------------------------------------------------------------------------
@@ -217,17 +272,10 @@ public class App extends Application {
 		switchSceneAccounts2MainMenuBtn.setText("Switch Scene to MainMenu");
 		switchSceneAccounts2MainMenuBtn.setOnAction(e->
 		{
+			updateMainMenuScene();
 			stage.setScene(mainMenuScene);
 		});
 		switchSceneAccounts2MainMenuBtn.setFont(Font.font("Standart", 16d));
-		switchSceneAccounts2HomeBtn.setText("Switch Scene to Home");
-		switchSceneAccounts2HomeBtn.setOnAction(e->
-		{
-    		updateHomeScene();
-			stage.setScene(homeScene);
-		});
-		switchSceneAccounts2HomeBtn.setFont(Font.font("Standart", 16d));
-		switchSceneAccounts2HomeBtn.setVisible(false);
 		// Labels:
 		accountsHeaderLabel.setText("Accounts");
 		accountsHeaderLabel.setFont(Font.font("Standart", FontWeight.BOLD, 24d));
@@ -256,17 +304,149 @@ public class App extends Application {
         accountInput.setMaxWidth(400);
         accountPaneTop.getChildren().addAll(accountsHeaderLabel);
         accountPaneCen.getChildren().addAll(accountsAddingExplanation, accountInput, accountsAddingFeedback);
-        accountPaneBot.getChildren().addAll(switchSceneAccounts2MainMenuBtn, switchSceneAccounts2HomeBtn);
+        accountPaneBot.getChildren().addAll(switchSceneAccounts2MainMenuBtn);
+        
+        // -----------------------------------------------------------------------------------
+        // Create scene contents for accountEditScene
+		// Buttons:
+		switchSceneAccountsEdit2HomeBtn.setText("Switch Scene to Home");
+		switchSceneAccountsEdit2HomeBtn.setOnAction(e->
+		{
+    		updateHomeScene();
+			stage.setScene(homeScene);
+		});
+		switchSceneAccountsEdit2HomeBtn.setFont(Font.font("Standart", 16d));
+		// Labels:
+		accountsEditHeaderLabel.setText("AccountsEdit");
+		accountsEditHeaderLabel.setFont(Font.font("Standart", FontWeight.BOLD, 24d));
+        accountsEditAddingExplanation.setText("Change your user data here:");
+        accountsEditAddingExplanation.setFont(Font.font("Standart", 16d));
+        accountsEditAddingNameLabel.setText("Name");
+        accountsEditAddingNameLabel.setFont(Font.font("Standart", 16d));
+        accountsEditAddingHeightLabel.setText("Height");
+        accountsEditAddingHeightLabel.setFont(Font.font("Standart", 16d));
+        accountsEditAddingGenderLabel.setText("Gender");
+        accountsEditAddingGenderLabel.setFont(Font.font("Standart", 16d));
+        accountsEditAddingWeightLabel.setText("Weight");
+        accountsEditAddingWeightLabel.setFont(Font.font("Standart", 16d));
+        accountsEditAddingGoalWeightLabel.setText("Goal Weight");
+        accountsEditAddingGoalWeightLabel.setFont(Font.font("Standart", 16d));
+        
+        accountsEditAddingNameFeedback.setText("");
+        accountsEditAddingNameFeedback.setFont(Font.font("Standart", 16d));
+        accountsEditAddingHeightFeedback.setText("");
+        accountsEditAddingHeightFeedback.setFont(Font.font("Standart", 16d));
+        accountsEditAddingGenderFeedback.setText("");
+        accountsEditAddingGenderFeedback.setFont(Font.font("Standart", 16d));
+        accountsEditAddingWeightFeedback.setText("");
+        accountsEditAddingWeightFeedback.setFont(Font.font("Standart", 16d));
+        accountsEditAddingGoalWeightFeedback.setText("");
+        accountsEditAddingGoalWeightFeedback.setFont(Font.font("Standart", 16d));
+        // Input for account creation
+        accountEditInputName.setText("");
+        accountEditInputName.setFont(Font.font("Standart", 16d));
+        accountEditInputName.setOnAction(e->
+        {
+        	String inputValue = accountEditInputName.getText();
+        	if(searchAccount(inputValue) != -1)
+        	{
+        		accountsEditAddingNameFeedback.setText("Account already exists!");
+        	}
+        	else
+        	{
+        		accountsEditAddingNameFeedback.setText("Done!");
+        		editAccount(inputValue, 0);
+        	}
+        	
+        	accountEditInputName.setText("");
+        });
+        accountEditInputName.setMaxWidth(400);
+        
+        accountEditInputHeight.setText("");
+        accountEditInputHeight.setFont(Font.font("Standart", 16d));
+        accountEditInputHeight.setOnAction(e->
+        {
+        	String inputValue = accountEditInputHeight.getText();
+        	try
+        	{
+        		Float.parseFloat(inputValue);
+        		editAccount(inputValue, 1);
+        		accountsEditAddingHeightFeedback.setText("Done!");
+        	}
+        	catch (NumberFormatException someError)
+        	{
+        		accountsEditAddingHeightFeedback.setText("Value not numerical!");
+        	}
+        	accountEditInputHeight.setText("");
+        });
+        accountEditInputHeight.setMaxWidth(400);
+        
+        accountEditInputGender.setText("");
+        accountEditInputGender.setFont(Font.font("Standart", 16d));
+        accountEditInputGender.setOnAction(e->
+        {
+        	String inputValue = accountEditInputGender.getText();
+        	editAccount(inputValue, 2);
+        	accountEditInputGender.setText("");
+    		accountsEditAddingGenderFeedback.setText("Done!");
+        });
+        accountEditInputGender.setMaxWidth(400);
+        
+        accountEditInputWeight.setText("");
+        accountEditInputWeight.setFont(Font.font("Standart", 16d));
+        accountEditInputWeight.setOnAction(e->
+        {
+        	String inputValue = accountEditInputWeight.getText();
+        	try
+        	{
+        		Float.parseFloat(inputValue);
+            	editAccount(inputValue, 3);
+        		accountsEditAddingWeightFeedback.setText("Done!");
+        	}
+        	catch (NumberFormatException someError)
+        	{
+        		accountsEditAddingWeightFeedback.setText("Value not numerical!");
+        	}
+        	accountEditInputWeight.setText("");
+        });
+        accountEditInputWeight.setMaxWidth(400);
+        
+        accountEditInputGoalWeight.setText("");
+        accountEditInputGoalWeight.setFont(Font.font("Standart", 16d));
+        accountEditInputGoalWeight.setOnAction(e->
+        {
+        	String inputValue = accountEditInputGoalWeight.getText();
+        	try
+        	{
+        		Float.parseFloat(inputValue);
+            	editAccount(inputValue, 4);
+        		accountsEditAddingGoalWeightFeedback.setText("Done!");
+        	}
+        	catch (NumberFormatException someError)
+        	{
+        		accountsEditAddingGoalWeightFeedback.setText("Value not numerical!");
+        	}
+        	accountEditInputGoalWeight.setText("");
+        });
+        accountEditInputGoalWeight.setMaxWidth(400);
+        
+        accountEditPaneTop.getChildren().addAll(accountsEditHeaderLabel);
+        accountEditPaneCen.getChildren().addAll(accountsEditAddingExplanation, accountsEditAddingNameLabel, accountEditInputName, accountsEditAddingNameFeedback,
+        																	   accountsEditAddingHeightLabel, accountEditInputHeight, accountsEditAddingHeightFeedback,
+        																	   accountsEditAddingGenderLabel, accountEditInputGender, accountsEditAddingGenderFeedback,
+        																	   accountsEditAddingWeightLabel, accountEditInputWeight, accountsEditAddingWeightFeedback,
+        																	   accountsEditAddingGoalWeightLabel, accountEditInputGoalWeight, accountsEditAddingGoalWeightFeedback);
+        accountEditPaneBot.getChildren().addAll(switchSceneAccountsEdit2HomeBtn);
         
         // -----------------------------------------------------------------------------------
         // Create scene contents for homeScene
         // Buttons:
-        switchSceneHome2AccountsBtn.setText("Switch Scene to Accounts");
-        switchSceneHome2AccountsBtn.setOnAction(e->
+        switchSceneHome2AccountsEditBtn.setText("Switch Scene to AccountsEdit");
+        switchSceneHome2AccountsEditBtn.setOnAction(e->
         {
-			stage.setScene(accountScene);
+			stage.setScene(accountEditScene);
 		});
-        switchSceneHome2AccountsBtn.setFont(Font.font("Standart", 16d));
+        switchSceneHome2AccountsEditBtn.setFont(Font.font("Standart", 16d));
         switchSceneHome2RecipiesBtn.setText("Switch Scene to Recipies");
         switchSceneHome2RecipiesBtn.setOnAction(e->
         {
@@ -283,7 +463,7 @@ public class App extends Application {
 
         homePaneTop.getChildren().addAll(homeHeaderLabel);
         homePaneCen.getChildren().addAll(homeBMILabel, homeNutriLabel);
-        homePaneBot.getChildren().addAll(switchSceneHome2AccountsBtn, switchSceneHome2RecipiesBtn);
+        homePaneBot.getChildren().addAll(switchSceneHome2AccountsEditBtn, switchSceneHome2RecipiesBtn);
 		
         // -----------------------------------------------------------------------------------
         // Create scene contents for recipiesScene
@@ -297,11 +477,107 @@ public class App extends Application {
         // Labels:
         recipiesHeaderLabel.setText("Recipies");
         recipiesHeaderLabel.setFont(Font.font("Standart", FontWeight.BOLD, 24d));
+        recipyAddingFoodExplanationLabel.setText("Add new food item in this order:\n"
+        								       + "name, nutritional value(seperated by commas)\n"
+        								       + "this is meant for basic ingredients, not recipies");
+        recipyAddingFoodExplanationLabel.setFont(Font.font("Standart", 16d));
+        recipyAddingFoodFeedbackLabel.setText("");
+        recipyAddingFoodFeedbackLabel.setFont(Font.font("Standart", 16d));
+        
+        recipyAddingRecipyExplanationLabel.setText("Add new recipy in this order:\n"
+				   							   + "[name], [name of the ingredient Nr.1]-[ammount in grams], [name of the ingredient Nr.2]-[ammount in grams], ...(seperated by commas)\n"
+		   									   + "this is meant for recipies");
+        recipyAddingRecipyExplanationLabel.setFont(Font.font("Standart", 16d));
+        recipyAddingRecipyFeedbackLabel.setText("");
+        recipyAddingRecipyFeedbackLabel.setFont(Font.font("Standart", 16d));
+
+        // Input for new food items
+        recipyAddingFood.setText("");
+        recipyAddingFood.setText("");
+        recipyAddingFood.setFont(Font.font("Standart", 16d));
+        recipyAddingFood.setOnAction(e->
+        {
+        	String inputValue = recipyAddingFood.getText();
+        	try
+        	{
+        		inputValue += ",";
+        		addFoodItem(inputValue);
+            	recipyAddingFoodFeedbackLabel.setText("Done!");
+        	}
+        	catch (NumberFormatException someError)
+        	{
+        		recipyAddingFoodFeedbackLabel.setText("Error!");
+        	}
+        	recipyAddingFood.setText("");
+        });
+        recipyAddingFood.setMaxWidth(400);
+        
+        // Input for new recipies
+        recipyAddingRecipy.setText("");
+        recipyAddingRecipy.setText("");
+        recipyAddingRecipy.setFont(Font.font("Standart", 16d));
+        recipyAddingRecipy.setOnAction(e->
+        {
+        	String inputValue = recipyAddingRecipy.getText();
+        	try
+        	{
+        		boolean ok = true;
+        		String[] inputValues = inputValue.split(",");
+        		float[] amountValues = new float[inputValues.length];
+        		float totalKcal  = 0.0f;
+        		float totalWeight = 0.0f;
+        		for(int i = 1; i < inputValue.length(); ++i)
+        		{
+        			String[] inputValuesSplit = inputValues[i].split("-");
+        			String foodItem = inputValuesSplit[0].strip();
+        			String foodAmount = inputValuesSplit[1].strip();
+        			if(searchFoodItem(foodItem) == -1)
+        			{
+        				ok = false;
+                		recipyAddingRecipyFeedbackLabel.setText(inputValues[i] + "couldn't be found");
+        				break;
+        			}
+        			else
+        			{
+        				totalWeight += Float.parseFloat(foodAmount);
+        			}
+        		}
+        		for(int i = 1; i < inputValue.length(); ++i)
+        		{
+        			String[] inputValuesSplit = inputValues[i].split("-");
+        			String foodItem = inputValuesSplit[0].strip();
+        			String foodAmount = inputValuesSplit[1].strip();
+        			
+        			amountValues[i] = (100 / totalWeight) * Float.parseFloat(foodAmount);
+        			
+        			// TODO: 
+        		}
+        		if(ok)
+        		{
+        			addFoodItem(inputValue);
+                	recipyAddingRecipyFeedbackLabel.setText("Done!");
+        		}
+        	}
+        	catch (NumberFormatException someError)
+        	{
+        		recipyAddingRecipyFeedbackLabel.setText("Value not numerical!");
+        	}
+        	recipyAddingRecipy.setText("");
+        });
+        recipyAddingRecipy.setMaxWidth(400);
+        
+        // ListView
+        foodItemList.setItems(readAllFoodItems());
+        foodItemList.setMaxWidth(600);
+        foodItemList.setMaxHeight(250);
+        
         
         recipiesPaneTop.getChildren().addAll(recipiesHeaderLabel);
-        recipiesPaneCen.getChildren().addAll();
+        recipiesPaneCen.getChildren().addAll(foodItemList, recipyAddingFoodExplanationLabel, recipyAddingFood, recipyAddingFoodFeedbackLabel,
+        									 recipyAddingRecipyExplanationLabel, recipyAddingRecipy, recipyAddingRecipyFeedbackLabel);
         recipiesPaneBot.getChildren().addAll(switchSceneRecipies2HomeBtn);
-
+        
+        
         // Set scene
         stage.setScene(mainMenuScene);
         stage.setTitle("NutriBuddy");
@@ -316,32 +592,14 @@ public class App extends Application {
     }
     
     // -----------------------------------------------------------------------------------
-    // Changes Variables in the account scene, normally called when switching to this scene
-    public void updateAccountScene()
-    {
-    	// Makes the transition from account to home scene possible, only if the user is logged in
-    	if(loggedInAccountIndex == -1)
-    	{
-    		switchSceneAccounts2HomeBtn.setVisible(false);
-    		switchSceneAccounts2MainMenuBtn.setVisible(true);
-    	}
-    	if(loggedInAccountIndex >= 0)
-    	{
-    		switchSceneAccounts2HomeBtn.setVisible(true);
-    		switchSceneAccounts2MainMenuBtn.setVisible(false);
-    	}
-		
-    }
-    
-    // -----------------------------------------------------------------------------------
-    // Changes Variables in the account scene, normally called when switching to this scene
+    // Changes Calculations in the home scene, normally called when switching to this scene
     public void updateHomeScene()
     {
     	// Updates the BMI
     	float weight = Float.parseFloat(readAccount(loggedInAccountIndex, "weight"));
     	float height = Float.parseFloat(readAccount(loggedInAccountIndex, "height"));
     	float bmi = weight / (float)Math.pow(height/100.0f, 2);
-    	homeBMILabel.setText("BMI: " + String.format("%.1f" ,bmi));
+    	homeBMILabel.setText("Your BMI: " + String.format("%.1f" ,bmi));
     	
     	// Updates the Nutri Score
     	float genderFactor;
@@ -352,7 +610,6 @@ public class App extends Application {
     	else
     	{
     		genderFactor = 0.9f;
-
     	}
     	float dailyNutriKCalTotal = 24.0f * weight * 1.6f;
     	float dailyNutriKCalCurrent = Float.parseFloat(readAccount(loggedInAccountIndex, "nutritions_day"));
@@ -362,6 +619,16 @@ public class App extends Application {
     						 "\nKcal still left for today: " + String.format("%.0f", dailyNutriKCalDelta));
     }
     
+    // -----------------------------------------------------------------------------------
+    // Changes MainMenuScene
+    
+    // -----------------------------------------------------------------------------------
+    public void updateMainMenuScene()
+    {
+    	// Updates the AccountsList
+    	accountsList.setItems(readAllAccounts("name"));
+    }
+	
     // -----------------------------------------------------------------------------------
 	// Returns value of given data from account with given index from the csv file
   	public String readAccount(int index, String data)
@@ -373,7 +640,7 @@ public class App extends Application {
  				CSVParser csvParser = new CSVParser(reader,
  						CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());)
  		{
- 			// Reading
+ 			// Reading data from record
  			int i = 0;
  			for (CSVRecord csvRecord : csvParser)
  			{
@@ -389,13 +656,46 @@ public class App extends Application {
  		}
  		catch (IOException e)
  		{
- 			// TODO Auto-generated catch block
  			e.printStackTrace();
  		}
  		
  		return result;
  	}
- 	
+  	
+  	// -----------------------------------------------------------------------------------
+	// Returns value of given data from all accounts from the csv file
+  	
+  	 // -----------------------------------------------------------------------------------
+	// Returns value of given data from all accounts from the csv file
+  	public ObservableList<String> readAllAccounts(String data)
+ 	{
+ 		// Returns all names from the csv file
+  		 ObservableList<String> result = FXCollections.observableArrayList();
+ 		try (Reader reader = Files.newBufferedReader(Paths.get(accountCsvFile));
+ 				@SuppressWarnings("deprecation")
+ 				CSVParser csvParser = new CSVParser(reader,
+ 						CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());)
+ 		{
+ 			// Reading data from record
+ 			for (CSVRecord csvRecord : csvParser)
+ 			{
+				result.add(csvRecord.get(data));
+ 			}
+ 			
+ 			csvParser.close();
+ 			reader.close();
+ 		}
+ 		catch (IOException e)
+ 		{
+ 			result.add("Error, Accounts data " + data + "not found");
+ 			e.printStackTrace();
+ 		}
+ 		
+ 		return result;
+ 	}
+  	
+    // -----------------------------------------------------------------------------------
+  	  	
  	// -----------------------------------------------------------------------------------
  	// Searches for Account by Name and returns index of found record; -1 if not found
  	public int searchAccount(String name)
@@ -423,7 +723,6 @@ public class App extends Application {
  		}
  		catch (IOException e)
  		{
- 			// TODO Auto-generated catch block
  			e.printStackTrace();
  		}
  		
@@ -443,7 +742,6 @@ public class App extends Application {
  		{
  			// Add record after removing leading and trailing spaces
  			account = account + ",0";
- 			System.out.println(account);
  			String[] accountData = account.split(",");
  			// Adds account only if it didn't already exist
  			if(searchAccount(accountData[0].strip()) == -1)
@@ -462,4 +760,169 @@ public class App extends Application {
  		}
  		return returnStatus;
  	}
+ 	
+ 	// -----------------------------------------------------------------------------------
+ 	// Changes the dataIndex from the currently logged in account to the newEntry
+  	public void editAccount(String newEntry, int dataIndex)
+  	{
+		ArrayList<String[]> csvBody = new ArrayList<String[]>();
+
+		try (Reader reader = Files.newBufferedReader(Paths.get(accountCsvFile));
+  				@SuppressWarnings("deprecation")
+ 				CSVParser csvParser = new CSVParser(reader,
+				CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());)
+ 		{
+	  		// Copy whole file into String Array
+ 			for(CSVRecord csvRecord : csvParser)
+ 			{
+ 				csvBody.add(new String[] { csvRecord.get(0), csvRecord.get(1), csvRecord.get(2), csvRecord.get(3), csvRecord.get(4), csvRecord.get(5)});
+ 			}
+ 			
+ 			// Clear whole file
+ 			
+ 			
+ 			// Edit entry
+ 			String[] recordToEdit = csvBody.get(loggedInAccountIndex);
+ 			recordToEdit[dataIndex] = newEntry.strip();
+ 			csvBody.set(loggedInAccountIndex, recordToEdit);
+ 			
+ 			reader.close();
+ 		}
+ 		catch (IOException e)
+ 		{
+ 			e.printStackTrace();
+ 		}
+  		
+  		
+  		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(accountCsvFile));
+  				@SuppressWarnings("deprecation")
+  				CSVPrinter csvPrinter = new CSVPrinter(writer,
+				CSVFormat.DEFAULT.withFirstRecordAsHeader());)
+  		{
+  			// Print header row
+  			csvPrinter.printRecord(("name"), ("height"), ("gender"), ("weight"), ("goal_weight"), ("nutritions_day"));
+  			
+  			// Print whole String Array back into file
+			for(int i = 0; i < csvBody.size(); ++i)
+			{
+ 	 			csvPrinter.printRecord(csvBody.get(i)[0], csvBody.get(i)[1], csvBody.get(i)[2], csvBody.get(i)[3], csvBody.get(i)[4], csvBody.get(i)[5]);
+			}
+  			
+  			csvPrinter.close();
+  			writer.close();
+  			
+  		}
+  		catch (IOException e)
+  		{
+  			e.printStackTrace();
+  		}
+  	}
+  	
+  	// -----------------------------------------------------------------------------------
+	// Returns all food items from csv
+  	public ObservableList<String> readAllFoodItems()
+ 	{
+ 		// Returns all names from the csv file
+  		ObservableList<String> result = FXCollections.observableArrayList();
+ 		try (Reader reader = Files.newBufferedReader(Paths.get(foodItemCsvFile));
+ 				@SuppressWarnings("deprecation")
+ 				CSVParser csvParser = new CSVParser(reader,
+ 						CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());)
+ 		{
+ 			// Reading data from record
+ 			for (CSVRecord csvRecord : csvParser)
+ 			{
+ 				if(csvRecord.get(2).isEmpty())
+ 				{
+ 					result.add(csvRecord.get(0) + " | Kcal: " +  csvRecord.get(1));
+ 				}
+ 				else
+ 				{
+ 					String ingredientsOutputString = "";
+ 					String ingredientsOneString = csvRecord.get(2);
+ 					String[] ingredientsArray = ingredientsOneString.split(" ");
+ 					for(int i = 0; i < ingredientsArray.length; ++i)
+ 					{
+ 						String[] ingredientAmountSep = ingredientsArray[i].split("_");
+ 						ingredientsOutputString += ", " + ingredientAmountSep[1] + "g " + ingredientAmountSep[0];
+ 					}
+ 					result.add(csvRecord.get(0) + " | Kcal: " +  csvRecord.get(1) + " | Ingredients: " + ingredientsOutputString);
+ 				}
+ 			}
+ 			
+ 			csvParser.close();
+ 			reader.close();
+ 		}
+ 		catch (IOException e)
+ 		{
+ 			result.add("Error");
+ 			e.printStackTrace();
+ 		}
+ 		
+ 		return result;
+ 	}
+  	
+  	// -----------------------------------------------------------------------------------
+ 	
+  	public int addFoodItem(String foodItem)
+  	{
+  		// Adds a new account record to the accounts csv
+  		int returnStatus = -1;
+  		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(foodItemCsvFile), StandardOpenOption.APPEND);
+  				@SuppressWarnings("deprecation")
+  				CSVPrinter csvPrinter = new CSVPrinter(writer,
+  						CSVFormat.DEFAULT.withFirstRecordAsHeader());)
+  		{
+  			// Add record after removing leading and trailing spaces
+  			String[] foodData = foodItem.split(",");
+  			// Adds account only if it didn't already exist
+  			if(searchFoodItem(foodData[0].strip()) == -1)
+  			{
+  	 			csvPrinter.printRecord(foodData[0].strip(), foodData[1].strip(), foodData[2].strip(), foodData[3].strip(), foodData[4].strip(), foodData[5].strip());
+  	 			returnStatus = 1;
+  			}
+  			
+  			csvPrinter.close();
+  			writer.close();
+  			
+  		}
+  		catch (IOException e)
+  		{
+  			e.printStackTrace();
+  		}
+  		return returnStatus;
+  	}
+  		  	
+  	// -----------------------------------------------------------------------------------
+  	// Searches for Food item by Name and returns index of found record; -1 if not found
+  	public int searchFoodItem(String name)
+  	{
+  		// Returns all names from the csv file
+  		try (Reader reader = Files.newBufferedReader(Paths.get(foodItemCsvFile));
+  				@SuppressWarnings("deprecation")
+  				CSVParser csvParser = new CSVParser(reader,
+  						CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());)
+  		{
+  			// Reading
+  			int i = 0;
+  			for (CSVRecord csvRecord : csvParser)
+  			{
+  				String nameCheck = csvRecord.get("name");
+  				if(nameCheck.equals(name))
+  				{
+  					return i;
+  				}
+  				++i;
+  			}
+  			
+  			csvParser.close();
+  			reader.close();
+  		}
+  		catch (IOException e)
+  		{
+  			e.printStackTrace();
+  		}
+  		
+  		return (-1);
+  	}
 }
