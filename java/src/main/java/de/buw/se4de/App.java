@@ -59,7 +59,7 @@ public class App extends Application {
 	private static final String accountCsvFile = "src/main/resources/accounts.csv";
 	private static final String foodItemCsvFile = "src/main/resources/food_items.csv";
 	private static final int 	screenSizeX = 1000;
-	private static final int 	screenSizeY = 800;
+	private static final int 	screenSizeY = 900;
 	private static final int 	topPanelSizeY = 100;
 	private static final String mainPaneColor = "-fx-background-color: rgba(252, 255, 255, 1);";
 	private static final String topPaneColor = "-fx-background-color: rgba(181, 245, 157, 1);";
@@ -125,18 +125,23 @@ public class App extends Application {
  	Label accountsEditHeaderLabel = new Label();
     Label accountsEditAddingExplanation = new Label();
     Label accountsEditAddingNameLabel = new Label();
+    Label accountsEditCurrentNameLabel = new Label();
     TextField accountEditInputName = new TextField();
     Label accountsEditAddingNameFeedback = new Label();
     Label accountsEditAddingHeightLabel = new Label();
+    Label accountsEditCurrentHeightLabel = new Label();
     TextField accountEditInputHeight = new TextField();
     Label accountsEditAddingHeightFeedback = new Label();
     Label accountsEditAddingGenderLabel = new Label();
+    Label accountsEditCurrentGenderLabel = new Label();
     TextField accountEditInputGender = new TextField();
     Label accountsEditAddingGenderFeedback = new Label();
     Label accountsEditAddingWeightLabel = new Label();
+    Label accountsEditCurrentWeightLabel = new Label();
     TextField accountEditInputWeight = new TextField();
     Label accountsEditAddingWeightFeedback = new Label();
     Label accountsEditAddingGoalWeightLabel = new Label();
+    Label accountsEditCurrentGoalWeightLabel = new Label();
     TextField accountEditInputGoalWeight = new TextField();
     Label accountsEditAddingGoalWeightFeedback = new Label();
     
@@ -332,6 +337,23 @@ public class App extends Application {
         accountsEditAddingGoalWeightLabel.setText("Goal Weight");
         accountsEditAddingGoalWeightLabel.setFont(Font.font("Standart", 16d));
         
+        String name = (readAccount(loggedInAccountIndex, "name"));
+        accountsEditCurrentNameLabel.setText(name);
+        accountsEditCurrentNameLabel.setFont(Font.font("Standart", 16d));
+        
+        String height = (readAccount(loggedInAccountIndex, "height"));
+        accountsEditCurrentHeightLabel.setText(height + " m");
+        accountsEditCurrentHeightLabel.setFont(Font.font("Standart", 16d));
+        //float weight = Float.parseFloat(readAccount(loggedInAccountIndex, "weight"));
+        accountsEditCurrentWeightLabel.setText("Aktuelles Gewicht " + " kg");
+        accountsEditCurrentWeightLabel.setFont(Font.font("Standart", 16d));
+        String gender = (readAccount(loggedInAccountIndex, "gender"));
+        accountsEditCurrentGenderLabel.setText(gender);
+        accountsEditCurrentGenderLabel.setFont(Font.font("Standart", 16d));
+        String goalweight = (readAccount(loggedInAccountIndex, "goal_weight"));
+        accountsEditCurrentGoalWeightLabel.setText(goalweight+ " kg");
+        accountsEditCurrentGoalWeightLabel.setFont(Font.font("Standart", 16d));
+        
         accountsEditAddingNameFeedback.setText("");
         accountsEditAddingNameFeedback.setFont(Font.font("Standart", 16d));
         accountsEditAddingHeightFeedback.setText("");
@@ -356,12 +378,13 @@ public class App extends Application {
         	{
         		accountsEditAddingNameFeedback.setText("Done!");
         		editAccount(inputValue, 0);
+        		updateAccountEditScene();
+        		
         	}
         	
         	accountEditInputName.setText("");
         });
         accountEditInputName.setMaxWidth(400);
-        
         accountEditInputHeight.setText("");
         accountEditInputHeight.setFont(Font.font("Standart", 16d));
         accountEditInputHeight.setOnAction(e->
@@ -372,6 +395,7 @@ public class App extends Application {
         		Float.parseFloat(inputValue);
         		editAccount(inputValue, 1);
         		accountsEditAddingHeightFeedback.setText("Done!");
+        		updateAccountEditScene();
         	}
         	catch (NumberFormatException someError)
         	{
@@ -389,6 +413,7 @@ public class App extends Application {
         	editAccount(inputValue, 2);
         	accountEditInputGender.setText("");
     		accountsEditAddingGenderFeedback.setText("Done!");
+    		updateAccountEditScene();
         });
         accountEditInputGender.setMaxWidth(400);
         
@@ -402,6 +427,7 @@ public class App extends Application {
         		Float.parseFloat(inputValue);
             	editAccount(inputValue, 3);
         		accountsEditAddingWeightFeedback.setText("Done!");
+        		updateAccountEditScene();
         	}
         	catch (NumberFormatException someError)
         	{
@@ -421,6 +447,7 @@ public class App extends Application {
         		Float.parseFloat(inputValue);
             	editAccount(inputValue, 4);
         		accountsEditAddingGoalWeightFeedback.setText("Done!");
+        		updateAccountEditScene();
         	}
         	catch (NumberFormatException someError)
         	{
@@ -431,11 +458,11 @@ public class App extends Application {
         accountEditInputGoalWeight.setMaxWidth(400);
         
         accountEditPaneTop.getChildren().addAll(accountsEditHeaderLabel);
-        accountEditPaneCen.getChildren().addAll(accountsEditAddingExplanation, accountsEditAddingNameLabel, accountEditInputName, accountsEditAddingNameFeedback,
-        																	   accountsEditAddingHeightLabel, accountEditInputHeight, accountsEditAddingHeightFeedback,
-        																	   accountsEditAddingGenderLabel, accountEditInputGender, accountsEditAddingGenderFeedback,
-        																	   accountsEditAddingWeightLabel, accountEditInputWeight, accountsEditAddingWeightFeedback,
-        																	   accountsEditAddingGoalWeightLabel, accountEditInputGoalWeight, accountsEditAddingGoalWeightFeedback);
+        accountEditPaneCen.getChildren().addAll(accountsEditAddingExplanation, accountsEditAddingNameLabel, accountsEditCurrentNameLabel, accountEditInputName, accountsEditAddingNameFeedback,
+        																	   accountsEditAddingHeightLabel, accountsEditCurrentHeightLabel, accountEditInputHeight, accountsEditAddingHeightFeedback,
+        																	   accountsEditAddingGenderLabel, accountsEditCurrentGenderLabel,accountEditInputGender, accountsEditAddingGenderFeedback,
+        																	   accountsEditAddingWeightLabel, accountsEditCurrentWeightLabel,accountEditInputWeight, accountsEditAddingWeightFeedback,
+        																	   accountsEditAddingGoalWeightLabel, accountsEditCurrentGoalWeightLabel, accountEditInputGoalWeight, accountsEditAddingGoalWeightFeedback);
         accountEditPaneBot.getChildren().addAll(switchSceneAccountsEdit2HomeBtn);
         
         // -----------------------------------------------------------------------------------
@@ -444,6 +471,7 @@ public class App extends Application {
         switchSceneHome2AccountsEditBtn.setText("Switch Scene to AccountsEdit");
         switchSceneHome2AccountsEditBtn.setOnAction(e->
         {
+        	updateAccountEditScene();
 			stage.setScene(accountEditScene);
 		});
         switchSceneHome2AccountsEditBtn.setFont(Font.font("Standart", 16d));
@@ -628,7 +656,16 @@ public class App extends Application {
     	// Updates the AccountsList
     	accountsList.setItems(readAllAccounts("name"));
     }
-	
+    // -----------------------------------------------------------------------------------
+	// Changes AccountEditScene
+    public void updateAccountEditScene() {
+    	accountsEditCurrentWeightLabel.setText("Current weight " + readAccount(loggedInAccountIndex, "weight") + " kg");
+    	accountsEditCurrentHeightLabel.setText("Current weight " + readAccount(loggedInAccountIndex, "height") + " m");
+    	accountsEditCurrentGenderLabel.setText("Current Gender: " + readAccount(loggedInAccountIndex, "gender"));   	
+    	accountsEditCurrentNameLabel.setText("Current name "+readAccount(loggedInAccountIndex, "name"));
+    	accountsEditCurrentGoalWeightLabel.setText("Current goal weight " + readAccount(loggedInAccountIndex, "goal_weight") + " kg");
+    }
+    
     // -----------------------------------------------------------------------------------
 	// Returns value of given data from account with given index from the csv file
   	public String readAccount(int index, String data)
