@@ -112,7 +112,7 @@ public class App extends Application {
 	Label accountListExplanationLabel = new Label();
 	TextField accountLogin = new TextField();
 	ListView<String> accountsList = new ListView<String>();
-
+	
     // Declare Content for AccountsScene
 	Button switchSceneAccounts2MainMenuBtn = new Button();
 	Label accountsHeaderLabel = new Label();
@@ -148,6 +148,7 @@ public class App extends Application {
     // Declare Content for HomeScene
     Button switchSceneHome2AccountsEditBtn = new Button();
     Button switchSceneHome2RecipiesBtn = new Button();
+    Button switchSceneHome2eatenFoodBtn = new Button();
     Label homeHeaderLabel = new Label();
     Label homeBMILabel = new Label();
     Label homeNutriLabel = new Label();
@@ -224,7 +225,9 @@ public class App extends Application {
         // -----------------------------------------------------------------------------------
 		// Create scene contents for mainMenuScene
         // Buttons:
-		switchSceneMainMenu2AccountBtn.setText("Switch Scene to Account");
+		
+	
+		switchSceneMainMenu2AccountBtn.setText("Create new Account");
 		switchSceneMainMenu2AccountBtn.setOnAction(e->
 		{
 			stage.setScene(accountScene);
@@ -274,7 +277,7 @@ public class App extends Application {
 		// -----------------------------------------------------------------------------------
         // Create scene contents for accountScene
 		// Buttons:
-		switchSceneAccounts2MainMenuBtn.setText("Switch Scene to MainMenu");
+		switchSceneAccounts2MainMenuBtn.setText("Login Menu");
 		switchSceneAccounts2MainMenuBtn.setOnAction(e->
 		{
 			updateMainMenuScene();
@@ -481,6 +484,13 @@ public class App extends Application {
 			stage.setScene(recipiesScene);
 		});
         switchSceneHome2RecipiesBtn.setFont(Font.font("Standart", 16d));
+        switchSceneHome2eatenFoodBtn.setText("Add eaten food");
+        switchSceneHome2eatenFoodBtn.setOnAction(e->
+        {
+        	
+        }		
+        );
+        switchSceneHome2eatenFoodBtn.setFont(Font.font("Standart", 16d));
         // Labels:
         homeHeaderLabel.setText("Home");
         homeHeaderLabel.setFont(Font.font("Standart", FontWeight.BOLD, 24d));
@@ -490,7 +500,7 @@ public class App extends Application {
         homeNutriLabel.setFont(Font.font("Standart", 16d));
 
         homePaneTop.getChildren().addAll(homeHeaderLabel);
-        homePaneCen.getChildren().addAll(homeBMILabel, homeNutriLabel);
+        homePaneCen.getChildren().addAll(homeBMILabel, homeNutriLabel, switchSceneHome2eatenFoodBtn);
         homePaneBot.getChildren().addAll(switchSceneHome2AccountsEditBtn, switchSceneHome2RecipiesBtn);
 		
         // -----------------------------------------------------------------------------------
@@ -626,6 +636,7 @@ public class App extends Application {
     	// Updates the BMI
     	float weight = Float.parseFloat(readAccount(loggedInAccountIndex, "weight"));
     	float height = Float.parseFloat(readAccount(loggedInAccountIndex, "height"));
+    	float goal_weight = Float.parseFloat(readAccount(loggedInAccountIndex, "goal_weight"));
     	float bmi = weight / (float)Math.pow(height/100.0f, 2);
     	homeBMILabel.setText("Your BMI: " + String.format("%.1f" ,bmi));
     	
@@ -640,6 +651,11 @@ public class App extends Application {
     		genderFactor = 0.9f;
     	}
     	float dailyNutriKCalTotal = 24.0f * weight * 1.6f;
+    	if(goal_weight>weight) {
+    		dailyNutriKCalTotal += 500;
+    	}else if(goal_weight<weight){
+    		dailyNutriKCalTotal -= 500;
+    	}
     	float dailyNutriKCalCurrent = Float.parseFloat(readAccount(loggedInAccountIndex, "nutritions_day"));
     	float dailyNutriKCalDelta = dailyNutriKCalTotal - dailyNutriKCalCurrent;
     	homeNutriLabel.setText("Kcal per day for you: " + String.format("%.0f", dailyNutriKCalTotal) +
