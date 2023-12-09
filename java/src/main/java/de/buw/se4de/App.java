@@ -90,6 +90,11 @@ public class App extends Application {
 	VBox homePaneTop = new VBox(normalVBoxSpacingY);
 	VBox homePaneCen = new VBox(normalVBoxSpacingY);
 	HBox homePaneBot = new HBox(normalHBoxSpacingX);
+	
+	VBox foodAddPane = new VBox(normalVBoxSpacingY);
+	VBox foodAddPaneTop = new VBox(normalVBoxSpacingY);
+	VBox foodAddPaneCen = new VBox(normalVBoxSpacingY);
+	HBox foodAddPaneBot = new HBox(normalHBoxSpacingX);
 
 	VBox recipiesPane = new VBox(normalVBoxSpacingY);
 	VBox recipiesPaneTop = new VBox(normalVBoxSpacingY);
@@ -101,6 +106,7 @@ public class App extends Application {
     Scene accountScene = new Scene(accountPane, screenSizeX, screenSizeY);
     Scene accountEditScene = new Scene(accountEditPane, screenSizeX, screenSizeY);
     Scene homeScene = new Scene(homePane, screenSizeX, screenSizeY);
+    Scene foodAddScene = new Scene(foodAddPane, screenSizeX, screenSizeY);
     Scene recipiesScene = new Scene(recipiesPane, screenSizeX, screenSizeY);
 	
     // Declare Content for MainMenuScene
@@ -153,6 +159,10 @@ public class App extends Application {
     Label homeBMILabel = new Label();
     Label homeNutriLabel = new Label();
 
+    //Declare Content for Eaten Kcal Scene
+    Button switchSceneFoodAdd2HomeBtn = new Button();
+    Label foodEatHeaderLabel = new Label();
+    
     // Declare Content for RecipiesScene
     Button switchSceneRecipies2HomeBtn = new Button();
     Label recipiesHeaderLabel = new Label();
@@ -198,6 +208,13 @@ public class App extends Application {
 		homePaneBot.setAlignment(Pos.CENTER);
 		homePane.setMargin(homePaneBot, new javafx.geometry.Insets(400, 0, 0, 0));
 		
+		foodAddPane.getChildren().addAll(foodAddPaneTop, foodAddPaneCen, foodAddPaneBot);
+		foodAddPaneTop.setPrefSize(300, topPanelSizeY);
+		foodAddPaneTop.setAlignment(Pos.CENTER);
+		foodAddPaneCen.setAlignment(Pos.CENTER);
+		foodAddPaneBot.setAlignment(Pos.CENTER);
+		foodAddPane.setMargin(foodAddPaneBot, new javafx.geometry.Insets(400, 0, 0, 0));
+		
 		recipiesPane.getChildren().addAll(recipiesPaneTop, recipiesPaneCen, recipiesPaneBot);
 		recipiesPaneTop.setPrefSize(300, topPanelSizeY);
 		recipiesPaneTop.setAlignment(Pos.CENTER);
@@ -218,6 +235,9 @@ public class App extends Application {
 		homePane.setStyle(mainPaneColor);
 		homePaneTop.setStyle(topPaneColor);
 
+		foodAddPane.setStyle(mainPaneColor);
+		foodAddPaneTop.setStyle(topPaneColor);
+		
 		recipiesPane.setStyle(mainPaneColor);
 		recipiesPaneTop.setStyle(topPaneColor);
 
@@ -487,7 +507,7 @@ public class App extends Application {
         switchSceneHome2eatenFoodBtn.setText("Add eaten food");
         switchSceneHome2eatenFoodBtn.setOnAction(e->
         {
-        	
+        	stage.setScene(foodAddScene);
         }		
         );
         switchSceneHome2eatenFoodBtn.setFont(Font.font("Standart", 16d));
@@ -504,9 +524,25 @@ public class App extends Application {
         homePaneBot.getChildren().addAll(switchSceneHome2AccountsEditBtn, switchSceneHome2RecipiesBtn);
 		
         // -----------------------------------------------------------------------------------
+        // Create scene contents for foodAddScene
+        // Buttons:
+        switchSceneFoodAdd2HomeBtn.setText("Home Menu");
+        switchSceneFoodAdd2HomeBtn.setOnAction(e->
+        {
+        	stage.setScene(homeScene);
+        });
+        switchSceneFoodAdd2HomeBtn.setFont(Font.font("Standart", 16d));
+        //Labels:
+        foodEatHeaderLabel.setText("Adding Kalories");
+        foodEatHeaderLabel.setFont(Font.font("Standart", FontWeight.BOLD, 24d));
+        
+        foodAddPaneTop.getChildren().addAll(foodEatHeaderLabel);
+        
+        foodAddPaneBot.getChildren().addAll(switchSceneFoodAdd2HomeBtn);
+        // -----------------------------------------------------------------------------------
         // Create scene contents for recipiesScene
         // Buttons:
-        switchSceneRecipies2HomeBtn.setText("Switch Scene to Home");
+        switchSceneRecipies2HomeBtn.setText("Home Menu");
         switchSceneRecipies2HomeBtn.setOnAction(e->
         {
 			stage.setScene(homeScene);
