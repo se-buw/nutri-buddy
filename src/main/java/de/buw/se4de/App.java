@@ -1086,11 +1086,9 @@ public class App extends Application {
   			// Reading
   			Random rand = new Random();
   			String index = rand.nextInt(18)+1+"";
-  			System.out.println(index);
   			for (CSVRecord csvRecord : csvParser)
   			{
   				String indexCheck = csvRecord.get("index");
-  				System.out.println(indexCheck);
   				if(indexCheck.equals(index))
   				{
   					return csvRecord.get(1)+"\n"+ "#FoodFacts";
