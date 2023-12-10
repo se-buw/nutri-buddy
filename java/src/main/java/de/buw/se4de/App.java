@@ -163,6 +163,8 @@ public class App extends Application {
     Label homeHeaderLabel = new Label();
     Label homeBMILabel = new Label();
     Label homeNutriLabel = new Label();
+    Label homeStreakLabel = new Label();
+    Label homeHealthFactLabel = new Label();
 
     //Declare Content for Eaten Kcal Scene
     Button switchSceneFoodAdd2HomeBtn = new Button();
@@ -450,18 +452,6 @@ public class App extends Application {
         	editAccount("female", 2);
         	updateAccountEditScene();
         });
-        /*
-        accountEditInputGender.setText("");
-        accountEditInputGender.setFont(Font.font("Standart", 16d));
-        accountEditInputGender.setOnAction(e->
-        {
-        	String inputValue = accountEditInputGender.getText();
-        	editAccount(inputValue, 2);
-        	accountEditInputGender.setText("");
-    		accountsEditAddingGenderFeedback.setText("Done!");
-    		updateAccountEditScene();
-        });
-        */
         
         accountEditInputGender.setMaxWidth(400);
         
@@ -544,9 +534,10 @@ public class App extends Application {
         homeBMILabel.setFont(Font.font("Standart", 16d));
         homeNutriLabel.setText("");
         homeNutriLabel.setFont(Font.font("Standart", 16d));
-
+        homeStreakLabel.setText("");
+        homeStreakLabel.setFont(Font.font("Standart", 16d));
         homePaneTop.getChildren().addAll(homeHeaderLabel);
-        homePaneCen.getChildren().addAll(homeBMILabel, homeNutriLabel, switchSceneHome2eatenFoodBtn);
+        homePaneCen.getChildren().addAll(homeBMILabel, homeNutriLabel,homeStreakLabel, switchSceneHome2eatenFoodBtn);
         homePaneBot.getChildren().addAll(switchSceneHome2AccountsEditBtn, switchSceneHome2RecipiesBtn);
 		
         // -----------------------------------------------------------------------------------
@@ -566,25 +557,24 @@ public class App extends Application {
         	{
         		String choosenFood = new String("");
         		choosenFood = choosenFoodLabel.getText();
-        		float float3 = Float.parseFloat(inputValue);
+        		float weightfood = Float.parseFloat(inputValue);
         		String[] parts = choosenFood.split("\\|");
         		parts[1] = parts[1].trim();
-        		System.out.println(parts[1]);
+        		//System.out.println(parts[1]);
         		String result = parts[1].substring(5, parts[1].length());
         	
-        		float float4 = Float.parseFloat(result);
-        		float finalvalue = (float3/100) * (float4);
+        		float kcalper100gramm = Float.parseFloat(result);
+        		float calculation = (weightfood/100) * (kcalper100gramm);
         		float dailyNutriKCal = Float.parseFloat(readAccount(loggedInAccountIndex, "nutritions_day"));
-        		dailyNutriKCal = dailyNutriKCal +finalvalue;
-        		String finals = dailyNutriKCal + "";
-        		editAccount(finals, 5);
-        		updateHomeScene();
+        		String dailyNutriKCalUpdatet = dailyNutriKCal +calculation + "";
+        		editAccount(dailyNutriKCalUpdatet, 5);
         		
-        		if(!readAccount(loggedInAccountIndex,"last_login").equals(LocalDate.now()+"")) {
+        		if(!readAccount(loggedInAccountIndex,"login").equals(LocalDate.now()+"")) {
         			editAccount(LocalDate.now()+"", 6);
         			int streak = Integer.parseInt(readAccount(loggedInAccountIndex, "streak")) + 1;
         			editAccount(streak + "", 7);
         		}
+        		updateHomeScene();
         
         	}
         	catch (NumberFormatException someError)
@@ -773,11 +763,18 @@ public class App extends Application {
     	}else if(goal_weight<weight){
     		dailyNutriKCalTotal -= 500;
     	}
+    	if(!readAccount(loggedInAccountIndex,"login").equals(LocalDate.now()+"")) {
+    		editAccount("0", 5);
+    	}
     	float dailyNutriKCalCurrent = Float.parseFloat(readAccount(loggedInAccountIndex, "nutritions_day"));
     	float dailyNutriKCalDelta = dailyNutriKCalTotal - dailyNutriKCalCurrent;
     	homeNutriLabel.setText("Kcal per day for you: " + String.format("%.0f", dailyNutriKCalTotal) +
     						 "\nKcal already consumed today: " + String.format("%.0f", dailyNutriKCalCurrent) +
     						 "\nKcal still left for today: " + String.format("%.0f", dailyNutriKCalDelta));
+    	int streak = Integer.parseInt(readAccount(loggedInAccountIndex, "streak"));
+    	homeStreakLabel.setText("Your Streak: "+ streak+ " days");
+    	//homeStreakLabel.setText("You used this application on " + String.format("%.0f", streak)+ " different days already.");
+    	
     }
     
     // -----------------------------------------------------------------------------------
@@ -946,7 +943,7 @@ public class App extends Application {
 	  		// Copy whole file into String Array
  			for(CSVRecord csvRecord : csvParser)
  			{
- 				csvBody.add(new String[] { csvRecord.get(0), csvRecord.get(1), csvRecord.get(2), csvRecord.get(3), csvRecord.get(4), csvRecord.get(5)});
+ 				csvBody.add(new String[] { csvRecord.get(0), csvRecord.get(1), csvRecord.get(2), csvRecord.get(3), csvRecord.get(4), csvRecord.get(5), csvRecord.get(6), csvRecord.get(7)});
  			}
  			
  			// Clear whole file
@@ -971,12 +968,12 @@ public class App extends Application {
 				CSVFormat.DEFAULT.withFirstRecordAsHeader());)
   		{
   			// Print header row
-  			csvPrinter.printRecord(("name"), ("height"), ("gender"), ("weight"), ("goal_weight"), ("nutritions_day"));
+  			csvPrinter.printRecord(("name"), ("height"), ("gender"), ("weight"), ("goal_weight"), ("nutritions_day"), ("login"), ("streak"));
   			
   			// Print whole String Array back into file
 			for(int i = 0; i < csvBody.size(); ++i)
 			{
- 	 			csvPrinter.printRecord(csvBody.get(i)[0], csvBody.get(i)[1], csvBody.get(i)[2], csvBody.get(i)[3], csvBody.get(i)[4], csvBody.get(i)[5]);
+ 	 			csvPrinter.printRecord(csvBody.get(i)[0], csvBody.get(i)[1], csvBody.get(i)[2], csvBody.get(i)[3], csvBody.get(i)[4], csvBody.get(i)[5], csvBody.get(i)[6], csvBody.get(i)[7]);
 			}
   			
   			csvPrinter.close();
