@@ -50,7 +50,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.control.ListView;
 import javafx.collections.*;
-
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 // ---------------------------------------------------------------------------------------
 
 public class App extends Application {
@@ -85,6 +86,7 @@ public class App extends Application {
 	VBox accountEditPane = new VBox(normalVBoxSpacingY);
 	VBox accountEditPaneTop = new VBox(normalVBoxSpacingY);
 	VBox accountEditPaneCen = new VBox(smallVBoxSpacingY);
+	HBox accountEditPaneGen = new HBox(normalHBoxSpacingX);
 	HBox accountEditPaneBot = new HBox(normalHBoxSpacingX);
 
 	VBox homePane = new VBox(normalVBoxSpacingY);
@@ -151,7 +153,9 @@ public class App extends Application {
     Label accountsEditCurrentGoalWeightLabel = new Label();
     TextField accountEditInputGoalWeight = new TextField();
     Label accountsEditAddingGoalWeightFeedback = new Label();
-    
+    RadioButton maleRBtn = new RadioButton("male");
+    RadioButton femaleRBtn = new RadioButton("female");
+    ToggleGroup genderGroup = new ToggleGroup();
     // Declare Content for HomeScene
     Button switchSceneHome2AccountsEditBtn = new Button();
     Button switchSceneHome2RecipiesBtn = new Button();
@@ -204,6 +208,7 @@ public class App extends Application {
 		accountEditPaneTop.setAlignment(Pos.CENTER);
 		accountEditPaneCen.setAlignment(Pos.CENTER);
 		accountEditPaneBot.setAlignment(Pos.CENTER);
+		accountEditPaneGen.setAlignment(Pos.CENTER);
 		accountEditPane.setMargin(accountEditPaneBot, new javafx.geometry.Insets(100, 0, 0, 0));
 		
 		homePane.getChildren().addAll(homePaneTop, homePaneCen, homePaneBot);
@@ -372,7 +377,6 @@ public class App extends Application {
         String height = (readAccount(loggedInAccountIndex, "height"));
         accountsEditCurrentHeightLabel.setText(height + " m");
         accountsEditCurrentHeightLabel.setFont(Font.font("Standart", 16d));
-        //float weight = Float.parseFloat(readAccount(loggedInAccountIndex, "weight"));
         accountsEditCurrentWeightLabel.setText("Aktuelles Gewicht " + " kg");
         accountsEditCurrentWeightLabel.setFont(Font.font("Standart", 16d));
         String gender = (readAccount(loggedInAccountIndex, "gender"));
@@ -392,6 +396,12 @@ public class App extends Application {
         accountsEditAddingWeightFeedback.setFont(Font.font("Standart", 16d));
         accountsEditAddingGoalWeightFeedback.setText("");
         accountsEditAddingGoalWeightFeedback.setFont(Font.font("Standart", 16d));
+        
+        maleRBtn.setToggleGroup(genderGroup);
+        maleRBtn.setFont(Font.font("Standart", 16d));
+        femaleRBtn.setToggleGroup(genderGroup);
+        femaleRBtn.setFont(Font.font("Standart", 16d));
+        accountEditPaneGen.getChildren().addAll(maleRBtn,femaleRBtn);
         // Input for account creation
         accountEditInputName.setText("");
         accountEditInputName.setFont(Font.font("Standart", 16d));
@@ -432,7 +442,15 @@ public class App extends Application {
         	accountEditInputHeight.setText("");
         });
         accountEditInputHeight.setMaxWidth(400);
-        
+        maleRBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        	editAccount("male", 2);
+        	updateAccountEditScene();
+        });
+        femaleRBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
+        	editAccount("female", 2);
+        	updateAccountEditScene();
+        });
+        /*
         accountEditInputGender.setText("");
         accountEditInputGender.setFont(Font.font("Standart", 16d));
         accountEditInputGender.setOnAction(e->
@@ -443,6 +461,8 @@ public class App extends Application {
     		accountsEditAddingGenderFeedback.setText("Done!");
     		updateAccountEditScene();
         });
+        */
+        
         accountEditInputGender.setMaxWidth(400);
         
         accountEditInputWeight.setText("");
@@ -485,12 +505,13 @@ public class App extends Application {
         });
         accountEditInputGoalWeight.setMaxWidth(400);
         
-        accountEditPaneTop.getChildren().addAll(accountsEditHeaderLabel);
+        accountEditPaneTop.getChildren().addAll(accountsEditHeaderLabel);// accountEditInputGender
         accountEditPaneCen.getChildren().addAll(accountsEditAddingExplanation, accountsEditAddingNameLabel, accountsEditCurrentNameLabel, accountEditInputName, accountsEditAddingNameFeedback,
         																	   accountsEditAddingHeightLabel, accountsEditCurrentHeightLabel, accountEditInputHeight, accountsEditAddingHeightFeedback,
-        																	   accountsEditAddingGenderLabel, accountsEditCurrentGenderLabel,accountEditInputGender, accountsEditAddingGenderFeedback,
+        																	   accountsEditAddingGenderLabel, accountsEditCurrentGenderLabel,accountEditPaneGen, accountsEditAddingGenderFeedback,
         																	   accountsEditAddingWeightLabel, accountsEditCurrentWeightLabel,accountEditInputWeight, accountsEditAddingWeightFeedback,
-        																	   accountsEditAddingGoalWeightLabel, accountsEditCurrentGoalWeightLabel, accountEditInputGoalWeight, accountsEditAddingGoalWeightFeedback);
+        																	   accountsEditAddingGoalWeightLabel, accountsEditCurrentGoalWeightLabel, accountEditInputGoalWeight, accountsEditAddingGoalWeightFeedback
+        																	   );
         accountEditPaneBot.getChildren().addAll(switchSceneAccountsEdit2HomeBtn);
         
         // -----------------------------------------------------------------------------------
@@ -558,11 +579,12 @@ public class App extends Application {
         		String finals = dailyNutriKCal + "";
         		editAccount(finals, 5);
         		updateHomeScene();
-        		/*
-            	editAccount(inputValue, 4);
-        		accountsEditAddingGoalWeightFeedback.setText("Done!");
-        		updateAccountEditScene();
-        		*/
+        		
+        		if(!readAccount(loggedInAccountIndex,"last_login").equals(LocalDate.now()+"")) {
+        			editAccount(LocalDate.now()+"", 6);
+        			int streak = Integer.parseInt(readAccount(loggedInAccountIndex, "streak")) + 1;
+        			editAccount(streak + "", 7);
+        		}
         
         	}
         	catch (NumberFormatException someError)
@@ -582,42 +604,8 @@ public class App extends Application {
             // Display the selected option in the Label
         	choosenFoodLabel.setText( newValue);
         });
-        
         amountFood.setMaxWidth(400);
-        /*
-        amountFood.setOnAction(e->
-        {
-        	String inputValue = amountFood.getText();
-        	try
-        	{
-        		String choosenFood = new String("");
-        		choosenFood = choosenFoodLabel.getText();
-        		float float3 = Float.parseFloat(inputValue);
-        		String[] parts = choosenFood.split("\\|\\|");
-        		parts[1].trim();
-        		String result = parts[1].substring(5, parts[1].length()-1);
-        		float float4 = Float.parseFloat(result);
-        		float finalvalue = (float3/100) * (float4);
-        		float dailyNutriKCalCurrent = Float.parseFloat(readAccount(loggedInAccountIndex, "nutritions_day"));
-        		dailyNutriKCalCurrent = dailyNutriKCalCurrent +finalvalue;
-        		String finals = dailyNutriKCalCurrent + "";
-        		editAccount(finals, 1);
-        		*/
-        		/*
-            	editAccount(inputValue, 4);
-        		accountsEditAddingGoalWeightFeedback.setText("Done!");
-        		updateAccountEditScene();
-        		*/
-        /*
-        	}
-        	catch (NumberFormatException someError)
-        	{
-        		
-        	}
-        	amountFood.setText("");
-        }	
-        );
-        */
+        
         // ListView
         foodItemList2.setItems(readAllFoodItems());
         foodItemList2.setMaxWidth(600);
@@ -805,7 +793,7 @@ public class App extends Application {
 	// Changes AccountEditScene
     public void updateAccountEditScene() {
     	accountsEditCurrentWeightLabel.setText("Current weight " + readAccount(loggedInAccountIndex, "weight") + " kg");
-    	accountsEditCurrentHeightLabel.setText("Current weight " + readAccount(loggedInAccountIndex, "height") + " m");
+    	accountsEditCurrentHeightLabel.setText("Current height " + readAccount(loggedInAccountIndex, "height") + " cm");
     	accountsEditCurrentGenderLabel.setText("Current Gender: " + readAccount(loggedInAccountIndex, "gender"));   	
     	accountsEditCurrentNameLabel.setText("Current name "+readAccount(loggedInAccountIndex, "name"));
     	accountsEditCurrentGoalWeightLabel.setText("Current goal weight " + readAccount(loggedInAccountIndex, "goal_weight") + " kg");
@@ -924,12 +912,12 @@ public class App extends Application {
  		{
  			// Add record after removing leading and trailing spaces
  			
- 			account = account + ",0,0";
+ 			account = account + ",0,0,0";
  			String[] accountData = account.split(",");
  			// Adds account only if it didn't already exist
  			if(searchAccount(accountData[0].strip()) == -1)
  			{
- 	 			csvPrinter.printRecord(accountData[0].strip(), accountData[1].strip(), accountData[2].strip(), accountData[3].strip(), accountData[4].strip(), accountData[5].strip(),accountData[6].strip());
+ 	 			csvPrinter.printRecord(accountData[0].strip(), accountData[1].strip(), accountData[2].strip(), accountData[3].strip(), accountData[4].strip(), accountData[5].strip(),accountData[6].strip(), accountData[7].strip());
  	 			returnStatus = 1;
  			}
  			
