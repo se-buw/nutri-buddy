@@ -161,7 +161,11 @@ public class App extends Application {
 
     //Declare Content for Eaten Kcal Scene
     Button switchSceneFoodAdd2HomeBtn = new Button();
+    Button addFoodBtn = new Button();
     Label foodEatHeaderLabel = new Label();
+    ListView<String> foodItemList2 = new ListView<String>();
+    Label choosenFoodLabel = new Label();
+    TextField amountFood = new TextField();
     
     // Declare Content for RecipiesScene
     Button switchSceneRecipies2HomeBtn = new Button();
@@ -532,12 +536,98 @@ public class App extends Application {
         	stage.setScene(homeScene);
         });
         switchSceneFoodAdd2HomeBtn.setFont(Font.font("Standart", 16d));
+        addFoodBtn.setText("Add Food");
+        addFoodBtn.setOnAction(e->
+        {
+        	String inputValue = amountFood.getText();
+        	try
+        	{
+        		String choosenFood = new String("");
+        		choosenFood = choosenFoodLabel.getText();
+        		System.out.println(choosenFood);
+        		float float3 = Float.parseFloat(inputValue);
+        		System.out.println(float3);
+        		
+        		String[] parts = choosenFood.split("\\|");
+        		parts[1] = parts[1].trim();
+        		System.out.println(parts[1]);
+        		String result = parts[1].substring(5, parts[1].length());
+        		System.out.println(result);
+        		float float4 = Float.parseFloat(result);
+        		float finalvalue = (float3/100) * (float4);
+        		float dailyNutriKCal = Float.parseFloat(readAccount(loggedInAccountIndex, "nutritions_day"));
+        		dailyNutriKCal = dailyNutriKCal +finalvalue;
+        		System.out.println(dailyNutriKCal);
+        		String finals = dailyNutriKCal + "";
+        		editAccount(finals, 5);
+        		
+        		/*
+            	editAccount(inputValue, 4);
+        		accountsEditAddingGoalWeightFeedback.setText("Done!");
+        		updateAccountEditScene();
+        		*/
+        
+        	}
+        	catch (NumberFormatException someError)
+        	{
+        		
+        	}
+        	amountFood.setText("");
+        });
+        addFoodBtn.setFont(Font.font("Standart", 16d));
         //Labels:
+        
         foodEatHeaderLabel.setText("Adding Kalories");
         foodEatHeaderLabel.setFont(Font.font("Standart", FontWeight.BOLD, 24d));
+        choosenFoodLabel.setText("I ate ");
+        choosenFoodLabel.setFont(Font.font("Standart", 16d));
+        foodItemList2.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            // Display the selected option in the Label
+        	choosenFoodLabel.setText( newValue);
+        });
+        
+        amountFood.setMaxWidth(400);
+        /*
+        amountFood.setOnAction(e->
+        {
+        	String inputValue = amountFood.getText();
+        	try
+        	{
+        		String choosenFood = new String("");
+        		choosenFood = choosenFoodLabel.getText();
+        		float float3 = Float.parseFloat(inputValue);
+        		String[] parts = choosenFood.split("\\|\\|");
+        		parts[1].trim();
+        		String result = parts[1].substring(5, parts[1].length()-1);
+        		float float4 = Float.parseFloat(result);
+        		float finalvalue = (float3/100) * (float4);
+        		float dailyNutriKCalCurrent = Float.parseFloat(readAccount(loggedInAccountIndex, "nutritions_day"));
+        		dailyNutriKCalCurrent = dailyNutriKCalCurrent +finalvalue;
+        		String finals = dailyNutriKCalCurrent + "";
+        		editAccount(finals, 1);
+        		*/
+        		/*
+            	editAccount(inputValue, 4);
+        		accountsEditAddingGoalWeightFeedback.setText("Done!");
+        		updateAccountEditScene();
+        		*/
+        /*
+        	}
+        	catch (NumberFormatException someError)
+        	{
+        		
+        	}
+        	amountFood.setText("");
+        }	
+        );
+        */
+        // ListView
+        foodItemList2.setItems(readAllFoodItems());
+        foodItemList2.setMaxWidth(600);
+        foodItemList2.setMaxHeight(250);
         
         foodAddPaneTop.getChildren().addAll(foodEatHeaderLabel);
-        
+        foodAddPaneCen.getChildren().addAll(foodItemList2, choosenFoodLabel, amountFood, addFoodBtn);
         foodAddPaneBot.getChildren().addAll(switchSceneFoodAdd2HomeBtn);
         // -----------------------------------------------------------------------------------
         // Create scene contents for recipiesScene
