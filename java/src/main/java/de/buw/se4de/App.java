@@ -164,6 +164,7 @@ public class App extends Application {
     Label homeStreakLabel = new Label();
     Label homeHealthFactLabel = new Label();
     Label foodfactLabel = new Label();
+    Label foodfactExplanation = new Label ();
     
     //Declare Content for Eaten Kcal Scene
     Button switchSceneFoodAdd2HomeBtn = new Button();
@@ -514,6 +515,7 @@ public class App extends Application {
         foodfactLabel.setText(foodFact());
         foodfactLabel.setFont(Font.font("Standart", 16d));
         foodfactLabel.setTextFill(Color.DARKVIOLET);
+        foodfactExplanation.setText("Healthy #FoodFacts");
         homePaneTop.getChildren().addAll(homeHeaderLabel);
         homePaneCen.getChildren().addAll(homeBMILabel, homeNutriLabel,homeStreakLabel, switchSceneHome2eatenFoodBtn,foodfactLabel);
         homePaneBot.getChildren().addAll(switchSceneHome2AccountsEditBtn, switchSceneHome2RecipiesBtn);
@@ -1091,7 +1093,7 @@ public class App extends Application {
   				System.out.println(indexCheck);
   				if(indexCheck.equals(index))
   				{
-  					return csvRecord.get(1);
+  					return csvRecord.get(1)+"\n"+ "#FoodFacts";
   				}
   			}
   			
