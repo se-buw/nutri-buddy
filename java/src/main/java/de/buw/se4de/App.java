@@ -20,6 +20,7 @@ import java.io.BufferedWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.LocalDate;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -544,23 +545,19 @@ public class App extends Application {
         	{
         		String choosenFood = new String("");
         		choosenFood = choosenFoodLabel.getText();
-        		System.out.println(choosenFood);
         		float float3 = Float.parseFloat(inputValue);
-        		System.out.println(float3);
-        		
         		String[] parts = choosenFood.split("\\|");
         		parts[1] = parts[1].trim();
         		System.out.println(parts[1]);
         		String result = parts[1].substring(5, parts[1].length());
-        		System.out.println(result);
+        	
         		float float4 = Float.parseFloat(result);
         		float finalvalue = (float3/100) * (float4);
         		float dailyNutriKCal = Float.parseFloat(readAccount(loggedInAccountIndex, "nutritions_day"));
         		dailyNutriKCal = dailyNutriKCal +finalvalue;
-        		System.out.println(dailyNutriKCal);
         		String finals = dailyNutriKCal + "";
         		editAccount(finals, 5);
-        		
+        		updateHomeScene();
         		/*
             	editAccount(inputValue, 4);
         		accountsEditAddingGoalWeightFeedback.setText("Done!");
@@ -751,7 +748,7 @@ public class App extends Application {
 	// -----------------------------------------------------------------------------------
 
     static void main(String[] args)
-    {
+    {	
         launch();
     }
     
@@ -765,7 +762,13 @@ public class App extends Application {
     	float goal_weight = Float.parseFloat(readAccount(loggedInAccountIndex, "goal_weight"));
     	float bmi = weight / (float)Math.pow(height/100.0f, 2);
     	homeBMILabel.setText("Your BMI: " + String.format("%.1f" ,bmi));
-    	
+    	if(bmi>=18.5 &&bmi<=24.9) {
+    		homeBMILabel.setTextFill(Color.GREEN);
+    	}else if(bmi<=16.5||bmi>=30){
+    		homeBMILabel.setTextFill(Color.RED);
+    	}else {
+    		homeBMILabel.setTextFill(Color.ORANGE);
+    	}
     	// Updates the Nutri Score
     	float genderFactor;
     	if(readAccount(loggedInAccountIndex, "gender") == "male")
@@ -920,12 +923,13 @@ public class App extends Application {
  						CSVFormat.DEFAULT.withFirstRecordAsHeader());)
  		{
  			// Add record after removing leading and trailing spaces
- 			account = account + ",0";
+ 			
+ 			account = account + ",0,0";
  			String[] accountData = account.split(",");
  			// Adds account only if it didn't already exist
  			if(searchAccount(accountData[0].strip()) == -1)
  			{
- 	 			csvPrinter.printRecord(accountData[0].strip(), accountData[1].strip(), accountData[2].strip(), accountData[3].strip(), accountData[4].strip(), accountData[5].strip());
+ 	 			csvPrinter.printRecord(accountData[0].strip(), accountData[1].strip(), accountData[2].strip(), accountData[3].strip(), accountData[4].strip(), accountData[5].strip(),accountData[6].strip());
  	 			returnStatus = 1;
  			}
  			
