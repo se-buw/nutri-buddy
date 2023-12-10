@@ -117,12 +117,11 @@ public class App extends Application {
 	
     // Declare Content for MainMenuScene
 	Button switchSceneMainMenu2AccountBtn = new Button();
+	Button switchSceneMainMenu2HomeBtn = new Button();
  	Label mainMenuHeaderLabel = new Label();
  	Label loginInstructionsLabel = new Label();
-	Label loginFeedbackLabel = new Label();
 	Label loginLabel = new Label();
 	Label accountListExplanationLabel = new Label();
-	TextField accountLogin = new TextField();
 	ListView<String> accountsList = new ListView<String>();
 	
     // Declare Content for AccountsScene
@@ -258,7 +257,18 @@ public class App extends Application {
 		// Create scene contents for mainMenuScene
         // Buttons:
 		
-	
+		switchSceneMainMenu2HomeBtn.setText("Login");
+		switchSceneMainMenu2HomeBtn.setOnAction(e->
+		{
+			String inputValue = accountsList.getSelectionModel().getSelectedItem();
+			int index = searchAccount(inputValue);
+        	// Checks login status and outputs error or transitions to homeScene
+        	loggedInAccountIndex = index;
+        	updateHomeScene();
+        	stage.setScene(homeScene);
+        	
+		});
+		switchSceneMainMenu2HomeBtn.setFont(Font.font("Standart", 16d));
 		switchSceneMainMenu2AccountBtn.setText("Create new Account");
 		switchSceneMainMenu2AccountBtn.setOnAction(e->
 		{
@@ -268,43 +278,19 @@ public class App extends Application {
 		// Labels:
 		mainMenuHeaderLabel.setText("Main Menu");
 		mainMenuHeaderLabel.setFont(Font.font("Standart", FontWeight.BOLD, 24d));
-		loginInstructionsLabel.setText("Please enter the name of the account you want to log in with");
+		loginInstructionsLabel.setText("Select the Account you want to login with or create a new Account");
 		loginInstructionsLabel.setFont(Font.font("Standart", 16d));
-		loginFeedbackLabel.setText("");
-		loginFeedbackLabel.setFont(Font.font("Standart", 16d));
 		accountListExplanationLabel.setText("Existing accounts:");
 		accountListExplanationLabel.setFont(Font.font("Standart", 16d));
 
-		// Input for login
-		accountLogin.setFont(Font.font("Standart", 16d));
-		accountLogin.setOnAction(e->
-		{
-        	String inputValue = accountLogin.getText();
-        	int index = searchAccount(inputValue);
-        	// Checks login status and outputs error or transitions to homeScene
-        	if(index  == -1)
-        	{
-        		accountLogin.setText("");
-        		loginFeedbackLabel.setText("Account not found");
-        		loggedInAccountIndex = -1;
-        	}
-        	else
-        	{
-        		accountLogin.setText("");
-        		loggedInAccountIndex = index;
-        		updateHomeScene();
-        		stage.setScene(homeScene);
-        	}
-        });
-		accountLogin.setMaxWidth(400);
 		// ListView
 		accountsList.setItems(readAllAccounts("name"));
 		accountsList.setMaxWidth(400);
 		accountsList.setMaxHeight(100);
 
 		mainMenuPaneTop.getChildren().addAll(mainMenuHeaderLabel);
-		mainMenuPaneCen.getChildren().addAll(loginInstructionsLabel, accountLogin, loginFeedbackLabel, accountListExplanationLabel, accountsList);
-		mainMenuPaneBot.getChildren().addAll(switchSceneMainMenu2AccountBtn);
+		mainMenuPaneCen.getChildren().addAll(loginInstructionsLabel,  accountListExplanationLabel, accountsList);
+		mainMenuPaneBot.getChildren().addAll(switchSceneMainMenu2HomeBtn,switchSceneMainMenu2AccountBtn);
         
 		// -----------------------------------------------------------------------------------
         // Create scene contents for accountScene
@@ -527,7 +513,6 @@ public class App extends Application {
         homeStreakLabel.setFont(Font.font("Standart", 16d));
         foodfactLabel.setText(foodFact());
         foodfactLabel.setFont(Font.font("Standart", 16d));
-        //foodfactLabel.setMaxSize(800, 150);
         foodfactLabel.setTextFill(Color.DARKVIOLET);
         homePaneTop.getChildren().addAll(homeHeaderLabel);
         homePaneCen.getChildren().addAll(homeBMILabel, homeNutriLabel,homeStreakLabel, switchSceneHome2eatenFoodBtn,foodfactLabel);
