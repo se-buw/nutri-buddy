@@ -23,6 +23,7 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDate;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Random;
 
 // CVS Manipulation
 import org.apache.commons.csv.CSVFormat;
@@ -41,6 +42,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -60,6 +62,7 @@ public class App extends Application {
 	// Constants:
 	private static final String accountCsvFile = "src/main/resources/accounts.csv";
 	private static final String foodItemCsvFile = "src/main/resources/food_items.csv";
+	private static final String factsCsvFile = "src/main/resources/facts.csv";
 	private static final int 	screenSizeX = 1000;
 	private static final int 	screenSizeY = 900;
 	private static final int 	topPanelSizeY = 100;
@@ -133,29 +136,25 @@ public class App extends Application {
  	Button switchSceneAccountsEdit2HomeBtn = new Button();
  	Label accountsEditHeaderLabel = new Label();
     Label accountsEditAddingExplanation = new Label();
-    Label accountsEditAddingNameLabel = new Label();
     Label accountsEditCurrentNameLabel = new Label();
     TextField accountEditInputName = new TextField();
     Label accountsEditAddingNameFeedback = new Label();
-    Label accountsEditAddingHeightLabel = new Label();
     Label accountsEditCurrentHeightLabel = new Label();
     TextField accountEditInputHeight = new TextField();
     Label accountsEditAddingHeightFeedback = new Label();
-    Label accountsEditAddingGenderLabel = new Label();
     Label accountsEditCurrentGenderLabel = new Label();
     TextField accountEditInputGender = new TextField();
     Label accountsEditAddingGenderFeedback = new Label();
-    Label accountsEditAddingWeightLabel = new Label();
     Label accountsEditCurrentWeightLabel = new Label();
     TextField accountEditInputWeight = new TextField();
     Label accountsEditAddingWeightFeedback = new Label();
-    Label accountsEditAddingGoalWeightLabel = new Label();
     Label accountsEditCurrentGoalWeightLabel = new Label();
     TextField accountEditInputGoalWeight = new TextField();
     Label accountsEditAddingGoalWeightFeedback = new Label();
     RadioButton maleRBtn = new RadioButton("male");
     RadioButton femaleRBtn = new RadioButton("female");
     ToggleGroup genderGroup = new ToggleGroup();
+    
     // Declare Content for HomeScene
     Button switchSceneHome2AccountsEditBtn = new Button();
     Button switchSceneHome2RecipiesBtn = new Button();
@@ -165,7 +164,8 @@ public class App extends Application {
     Label homeNutriLabel = new Label();
     Label homeStreakLabel = new Label();
     Label homeHealthFactLabel = new Label();
-
+    Label foodfactLabel = new Label();
+    
     //Declare Content for Eaten Kcal Scene
     Button switchSceneFoodAdd2HomeBtn = new Button();
     Button addFoodBtn = new Button();
@@ -349,7 +349,7 @@ public class App extends Application {
         // -----------------------------------------------------------------------------------
         // Create scene contents for accountEditScene
 		// Buttons:
-		switchSceneAccountsEdit2HomeBtn.setText("Switch Scene to Home");
+		switchSceneAccountsEdit2HomeBtn.setText("Home Menu");
 		switchSceneAccountsEdit2HomeBtn.setOnAction(e->
 		{
     		updateHomeScene();
@@ -357,29 +357,18 @@ public class App extends Application {
 		});
 		switchSceneAccountsEdit2HomeBtn.setFont(Font.font("Standart", 16d));
 		// Labels:
-		accountsEditHeaderLabel.setText("AccountsEdit");
+		accountsEditHeaderLabel.setText("Settings");
 		accountsEditHeaderLabel.setFont(Font.font("Standart", FontWeight.BOLD, 24d));
         accountsEditAddingExplanation.setText("Change your user data here:");
         accountsEditAddingExplanation.setFont(Font.font("Standart", 16d));
-        accountsEditAddingNameLabel.setText("Name");
-        accountsEditAddingNameLabel.setFont(Font.font("Standart", 16d));
-        accountsEditAddingHeightLabel.setText("Height");
-        accountsEditAddingHeightLabel.setFont(Font.font("Standart", 16d));
-        accountsEditAddingGenderLabel.setText("Gender");
-        accountsEditAddingGenderLabel.setFont(Font.font("Standart", 16d));
-        accountsEditAddingWeightLabel.setText("Weight");
-        accountsEditAddingWeightLabel.setFont(Font.font("Standart", 16d));
-        accountsEditAddingGoalWeightLabel.setText("Goal Weight");
-        accountsEditAddingGoalWeightLabel.setFont(Font.font("Standart", 16d));
         
         String name = (readAccount(loggedInAccountIndex, "name"));
         accountsEditCurrentNameLabel.setText(name);
         accountsEditCurrentNameLabel.setFont(Font.font("Standart", 16d));
-        
         String height = (readAccount(loggedInAccountIndex, "height"));
         accountsEditCurrentHeightLabel.setText(height + " m");
         accountsEditCurrentHeightLabel.setFont(Font.font("Standart", 16d));
-        accountsEditCurrentWeightLabel.setText("Aktuelles Gewicht " + " kg");
+        accountsEditCurrentWeightLabel.setText("");
         accountsEditCurrentWeightLabel.setFont(Font.font("Standart", 16d));
         String gender = (readAccount(loggedInAccountIndex, "gender"));
         accountsEditCurrentGenderLabel.setText(gender);
@@ -496,31 +485,31 @@ public class App extends Application {
         accountEditInputGoalWeight.setMaxWidth(400);
         
         accountEditPaneTop.getChildren().addAll(accountsEditHeaderLabel);// accountEditInputGender
-        accountEditPaneCen.getChildren().addAll(accountsEditAddingExplanation, accountsEditAddingNameLabel, accountsEditCurrentNameLabel, accountEditInputName, accountsEditAddingNameFeedback,
-        																	   accountsEditAddingHeightLabel, accountsEditCurrentHeightLabel, accountEditInputHeight, accountsEditAddingHeightFeedback,
-        																	   accountsEditAddingGenderLabel, accountsEditCurrentGenderLabel,accountEditPaneGen, accountsEditAddingGenderFeedback,
-        																	   accountsEditAddingWeightLabel, accountsEditCurrentWeightLabel,accountEditInputWeight, accountsEditAddingWeightFeedback,
-        																	   accountsEditAddingGoalWeightLabel, accountsEditCurrentGoalWeightLabel, accountEditInputGoalWeight, accountsEditAddingGoalWeightFeedback
+        accountEditPaneCen.getChildren().addAll(accountsEditAddingExplanation, accountsEditCurrentNameLabel, accountEditInputName, accountsEditAddingNameFeedback,
+        																	   accountsEditCurrentHeightLabel, accountEditInputHeight, accountsEditAddingHeightFeedback,
+        																	   accountsEditCurrentGenderLabel,accountEditPaneGen, accountsEditAddingGenderFeedback,
+        																	   accountsEditCurrentWeightLabel,accountEditInputWeight, accountsEditAddingWeightFeedback,
+        																	   accountsEditCurrentGoalWeightLabel, accountEditInputGoalWeight, accountsEditAddingGoalWeightFeedback
         																	   );
         accountEditPaneBot.getChildren().addAll(switchSceneAccountsEdit2HomeBtn);
         
         // -----------------------------------------------------------------------------------
         // Create scene contents for homeScene
         // Buttons:
-        switchSceneHome2AccountsEditBtn.setText("Switch Scene to AccountsEdit");
+        switchSceneHome2AccountsEditBtn.setText("Settings");
         switchSceneHome2AccountsEditBtn.setOnAction(e->
         {
         	updateAccountEditScene();
 			stage.setScene(accountEditScene);
 		});
         switchSceneHome2AccountsEditBtn.setFont(Font.font("Standart", 16d));
-        switchSceneHome2RecipiesBtn.setText("Switch Scene to Recipies");
+        switchSceneHome2RecipiesBtn.setText("Recipies");
         switchSceneHome2RecipiesBtn.setOnAction(e->
         {
 			stage.setScene(recipiesScene);
 		});
         switchSceneHome2RecipiesBtn.setFont(Font.font("Standart", 16d));
-        switchSceneHome2eatenFoodBtn.setText("Add eaten food");
+        switchSceneHome2eatenFoodBtn.setText("Track Calories");
         switchSceneHome2eatenFoodBtn.setOnAction(e->
         {
         	stage.setScene(foodAddScene);
@@ -536,8 +525,12 @@ public class App extends Application {
         homeNutriLabel.setFont(Font.font("Standart", 16d));
         homeStreakLabel.setText("");
         homeStreakLabel.setFont(Font.font("Standart", 16d));
+        foodfactLabel.setText(foodFact());
+        foodfactLabel.setFont(Font.font("Standart", 16d));
+        //foodfactLabel.setMaxSize(800, 150);
+        foodfactLabel.setTextFill(Color.DARKVIOLET);
         homePaneTop.getChildren().addAll(homeHeaderLabel);
-        homePaneCen.getChildren().addAll(homeBMILabel, homeNutriLabel,homeStreakLabel, switchSceneHome2eatenFoodBtn);
+        homePaneCen.getChildren().addAll(homeBMILabel, homeNutriLabel,homeStreakLabel, switchSceneHome2eatenFoodBtn,foodfactLabel);
         homePaneBot.getChildren().addAll(switchSceneHome2AccountsEditBtn, switchSceneHome2RecipiesBtn);
 		
         // -----------------------------------------------------------------------------------
@@ -549,7 +542,7 @@ public class App extends Application {
         	stage.setScene(homeScene);
         });
         switchSceneFoodAdd2HomeBtn.setFont(Font.font("Standart", 16d));
-        addFoodBtn.setText("Add Food");
+        addFoodBtn.setText("Track Calories");
         addFoodBtn.setOnAction(e->
         {
         	String inputValue = amountFood.getText();
@@ -586,7 +579,7 @@ public class App extends Application {
         addFoodBtn.setFont(Font.font("Standart", 16d));
         //Labels:
         
-        foodEatHeaderLabel.setText("Adding Kalories");
+        foodEatHeaderLabel.setText("Tracking Calories");
         foodEatHeaderLabel.setFont(Font.font("Standart", FontWeight.BOLD, 24d));
         choosenFoodLabel.setText("I ate ");
         choosenFoodLabel.setFont(Font.font("Standart", 16d));
@@ -1093,4 +1086,38 @@ public class App extends Application {
   		
   		return (-1);
   	}
+  	
+  	// -------------------------------------------------------------------------------------
+  	// Pick a random food Fact and return the String
+  	public String foodFact() {
+  	// Returns all names from the csv file
+  		try (Reader reader = Files.newBufferedReader(Paths.get(factsCsvFile));
+  				@SuppressWarnings("deprecation")
+  				CSVParser csvParser = new CSVParser(reader,
+  						CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());)
+  		{
+  			// Reading
+  			Random rand = new Random();
+  			String index = rand.nextInt(18)+1+"";
+  			System.out.println(index);
+  			for (CSVRecord csvRecord : csvParser)
+  			{
+  				String indexCheck = csvRecord.get("index");
+  				System.out.println(indexCheck);
+  				if(indexCheck.equals(index))
+  				{
+  					return csvRecord.get(1);
+  				}
+  			}
+  			
+  			csvParser.close();
+  			reader.close();
+  		}
+  		catch (IOException e)
+  		{
+  			e.printStackTrace();
+  		}
+  		return "couldnt generate a fact" ;
+  	}
+  	
 }
