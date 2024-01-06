@@ -71,7 +71,7 @@ public class App extends Application {
 	private static final int 	normalVBoxSpacingY = 30;
 	private static final int 	smallVBoxSpacingY = 2;
 	private static final int 	normalHBoxSpacingX = 15;
-	private static		 int	loggedInAccountIndex = -1;
+	protected  int	loggedInAccountIndex = -1;
 
 	// -----------------------------------------------------------------------------------
 
@@ -262,7 +262,7 @@ public class App extends Application {
 		switchSceneMainMenu2HomeBtn.setOnAction(e->
 		{
 			String inputValue = accountsList.getSelectionModel().getSelectedItem();
-			int index = searchAccount(inputValue);
+			int index = searchAccount(inputValue,accountCsvFile);
         	// Checks login status and outputs error or transitions to homeScene
         	loggedInAccountIndex = index;
         	updateHomeScene();
@@ -317,7 +317,7 @@ public class App extends Application {
         accountInput.setOnAction(e->
         {
         	String inputValue = accountInput.getText();
-        	int status = addAccount(inputValue);
+        	int status = addAccount(inputValue,accountCsvFile);
         	accountInput.setText("");
         	if(status == -1)
         	{
@@ -386,14 +386,14 @@ public class App extends Application {
         accountEditInputName.setOnAction(e->
         {
         	String inputValue = accountEditInputName.getText();
-        	if(searchAccount(inputValue) != -1)
+        	if(searchAccount(inputValue,accountCsvFile) != -1)
         	{
         		accountsEditAddingNameFeedback.setText("Account already exists!");
         	}
         	else
         	{
         		accountsEditAddingNameFeedback.setText("Done!");
-        		editAccount(inputValue, 0);
+        		editAccount(inputValue, 0,accountCsvFile);
         		updateAccountEditScene();
         		
         	}
@@ -409,7 +409,7 @@ public class App extends Application {
         	try
         	{
         		Float.parseFloat(inputValue);
-        		editAccount(inputValue, 1);
+        		editAccount(inputValue, 1,accountCsvFile);
         		accountsEditAddingHeightFeedback.setText("Done!");
         		updateAccountEditScene();
         	}
@@ -421,11 +421,11 @@ public class App extends Application {
         });
         accountEditInputHeight.setMaxWidth(400);
         maleRBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
-        	editAccount("male", 2);
+        	editAccount("male", 2,accountCsvFile);
         	updateAccountEditScene();
         });
         femaleRBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
-        	editAccount("female", 2);
+        	editAccount("female", 2,accountCsvFile);
         	updateAccountEditScene();
         });
         
@@ -439,7 +439,7 @@ public class App extends Application {
         	try
         	{
         		Float.parseFloat(inputValue);
-            	editAccount(inputValue, 3);
+            	editAccount(inputValue, 3,accountCsvFile);
         		accountsEditAddingWeightFeedback.setText("Done!");
         		updateAccountEditScene();
         	}
@@ -459,7 +459,7 @@ public class App extends Application {
         	try
         	{
         		Float.parseFloat(inputValue);
-            	editAccount(inputValue, 4);
+            	editAccount(inputValue, 4,accountCsvFile);
         		accountsEditAddingGoalWeightFeedback.setText("Done!");
         		updateAccountEditScene();
         	}
@@ -547,12 +547,12 @@ public class App extends Application {
         		float calculation = (weightfood/100) * (kcalper100gramm);
         		float dailyNutriKCal = Float.parseFloat(readAccount(loggedInAccountIndex, "nutritions_day", accountCsvFile));
         		String dailyNutriKCalUpdatet = dailyNutriKCal +calculation + "";
-        		editAccount(dailyNutriKCalUpdatet, 5);
+        		editAccount(dailyNutriKCalUpdatet, 5,accountCsvFile);
         		
         		if(!readAccount(loggedInAccountIndex,"login", accountCsvFile).equals(LocalDate.now()+"")) {
-        			editAccount(LocalDate.now()+"", 6);
+        			editAccount(LocalDate.now()+"", 6,accountCsvFile);
         			int streak = Integer.parseInt(readAccount(loggedInAccountIndex, "streak", accountCsvFile)) + 1;
-        			editAccount(streak + "", 7);
+        			editAccount(streak + "", 7,accountCsvFile);
         		}
         		updateHomeScene();
         
@@ -744,7 +744,7 @@ public class App extends Application {
     		dailyNutriKCalTotal -= 500;
     	}
     	if(!readAccount(loggedInAccountIndex,"login", accountCsvFile).equals(LocalDate.now()+"")) {
-    		editAccount("0", 5);
+    		editAccount("0", 5,accountCsvFile);
     	}
     	float dailyNutriKCalCurrent = Float.parseFloat(readAccount(loggedInAccountIndex, "nutritions_day", accountCsvFile));
     	float dailyNutriKCalDelta = dailyNutriKCalTotal - dailyNutriKCalCurrent;
@@ -782,7 +782,7 @@ public class App extends Application {
  	{
  		// Returns all names from the csv file
  		String result = "Error, Account " + index + " with data " + data + "not found";
- 		try (Reader reader = Files.newBufferedReader(Paths.get(accountCsvFile));
+ 		try (Reader reader = Files.newBufferedReader(Paths.get(filePath));
  				@SuppressWarnings("deprecation")
  				CSVParser csvParser = new CSVParser(reader,
  						CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());)
@@ -845,10 +845,10 @@ public class App extends Application {
   	  	
  	// -----------------------------------------------------------------------------------
  	// Searches for Account by Name and returns index of found record; -1 if not found
- 	public int searchAccount(String name)
+ 	public int searchAccount(String name, String filepath)
  	{
  		// Returns all names from the csv file
- 		try (Reader reader = Files.newBufferedReader(Paths.get(accountCsvFile));
+ 		try (Reader reader = Files.newBufferedReader(Paths.get(filepath));
  				@SuppressWarnings("deprecation")
  				CSVParser csvParser = new CSVParser(reader,
  						CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());)
@@ -878,11 +878,11 @@ public class App extends Application {
  	
  	// -----------------------------------------------------------------------------------
  	
- 	public int addAccount(String account)
+ 	public int addAccount(String account,String filePath)
  	{
  		// Adds a new account record to the accounts csv
  		int returnStatus = -1;
- 		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(accountCsvFile), StandardOpenOption.APPEND);
+ 		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePath), StandardOpenOption.APPEND);
  				@SuppressWarnings("deprecation")
  				CSVPrinter csvPrinter = new CSVPrinter(writer,
  						CSVFormat.DEFAULT.withFirstRecordAsHeader());)
@@ -892,7 +892,7 @@ public class App extends Application {
  			account = account + ",0,0,0";
  			String[] accountData = account.split(",");
  			// Adds account only if it didn't already exist
- 			if(searchAccount(accountData[0].strip()) == -1)
+ 			if(searchAccount(accountData[0].strip(),filePath) == -1)
  			{
  	 			csvPrinter.printRecord(accountData[0].strip(), accountData[1].strip(), accountData[2].strip(), accountData[3].strip(), accountData[4].strip(), accountData[5].strip(),accountData[6].strip(), accountData[7].strip());
  	 			returnStatus = 1;
@@ -911,11 +911,11 @@ public class App extends Application {
  	
  	// -----------------------------------------------------------------------------------
  	// Changes the dataIndex from the currently logged in account to the newEntry
-  	public void editAccount(String newEntry, int dataIndex)
+  	public void editAccount(String newEntry, int dataIndex,String filePath)
   	{
 		ArrayList<String[]> csvBody = new ArrayList<String[]>();
 
-		try (Reader reader = Files.newBufferedReader(Paths.get(accountCsvFile));
+		try (Reader reader = Files.newBufferedReader(Paths.get(filePath));
   				@SuppressWarnings("deprecation")
  				CSVParser csvParser = new CSVParser(reader,
 				CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());)
@@ -942,7 +942,7 @@ public class App extends Application {
  		}
   		
   		
-  		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(accountCsvFile));
+  		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePath));
   				@SuppressWarnings("deprecation")
   				CSVPrinter csvPrinter = new CSVPrinter(writer,
 				CSVFormat.DEFAULT.withFirstRecordAsHeader());)
