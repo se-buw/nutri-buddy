@@ -349,18 +349,18 @@ public class App extends Application {
         accountsEditAddingExplanation.setText("Change your user data here:");
         accountsEditAddingExplanation.setFont(Font.font("Standart", 16d));
         
-        String name = (readAccount(loggedInAccountIndex, "name"));
+        String name = (readAccount(loggedInAccountIndex, "name", accountCsvFile));
         accountsEditCurrentNameLabel.setText(name);
         accountsEditCurrentNameLabel.setFont(Font.font("Standart", 16d));
-        String height = (readAccount(loggedInAccountIndex, "height"));
+        String height = (readAccount(loggedInAccountIndex, "height", accountCsvFile));
         accountsEditCurrentHeightLabel.setText(height + " m");
         accountsEditCurrentHeightLabel.setFont(Font.font("Standart", 16d));
         accountsEditCurrentWeightLabel.setText("");
         accountsEditCurrentWeightLabel.setFont(Font.font("Standart", 16d));
-        String gender = (readAccount(loggedInAccountIndex, "gender"));
+        String gender = (readAccount(loggedInAccountIndex, "gender", accountCsvFile));
         accountsEditCurrentGenderLabel.setText(gender);
         accountsEditCurrentGenderLabel.setFont(Font.font("Standart", 16d));
-        String goalweight = (readAccount(loggedInAccountIndex, "goal_weight"));
+        String goalweight = (readAccount(loggedInAccountIndex, "goal_weight", accountCsvFile));
         accountsEditCurrentGoalWeightLabel.setText(goalweight+ " kg");
         accountsEditCurrentGoalWeightLabel.setFont(Font.font("Standart", 16d));
         
@@ -545,13 +545,13 @@ public class App extends Application {
         	
         		float kcalper100gramm = Float.parseFloat(result);
         		float calculation = (weightfood/100) * (kcalper100gramm);
-        		float dailyNutriKCal = Float.parseFloat(readAccount(loggedInAccountIndex, "nutritions_day"));
+        		float dailyNutriKCal = Float.parseFloat(readAccount(loggedInAccountIndex, "nutritions_day", accountCsvFile));
         		String dailyNutriKCalUpdatet = dailyNutriKCal +calculation + "";
         		editAccount(dailyNutriKCalUpdatet, 5);
         		
-        		if(!readAccount(loggedInAccountIndex,"login").equals(LocalDate.now()+"")) {
+        		if(!readAccount(loggedInAccountIndex,"login", accountCsvFile).equals(LocalDate.now()+"")) {
         			editAccount(LocalDate.now()+"", 6);
-        			int streak = Integer.parseInt(readAccount(loggedInAccountIndex, "streak")) + 1;
+        			int streak = Integer.parseInt(readAccount(loggedInAccountIndex, "streak", accountCsvFile)) + 1;
         			editAccount(streak + "", 7);
         		}
         		updateHomeScene();
@@ -715,9 +715,9 @@ public class App extends Application {
     public void updateHomeScene()
     {
     	// Updates the BMI
-    	float weight = Float.parseFloat(readAccount(loggedInAccountIndex, "weight"));
-    	float height = Float.parseFloat(readAccount(loggedInAccountIndex, "height"));
-    	float goal_weight = Float.parseFloat(readAccount(loggedInAccountIndex, "goal_weight"));
+    	float weight = Float.parseFloat(readAccount(loggedInAccountIndex, "weight", accountCsvFile));
+    	float height = Float.parseFloat(readAccount(loggedInAccountIndex, "height", accountCsvFile));
+    	float goal_weight = Float.parseFloat(readAccount(loggedInAccountIndex, "goal_weight", accountCsvFile));
     	float bmi = weight / (float)Math.pow(height/100.0f, 2);
     	homeBMILabel.setText("Your BMI: " + String.format("%.1f" ,bmi));
     	if(bmi>=18.5 &&bmi<=24.9) {
@@ -729,7 +729,7 @@ public class App extends Application {
     	}
     	// Updates the Nutri Score
     	float genderFactor;
-    	if(readAccount(loggedInAccountIndex, "gender") == "male")
+    	if(readAccount(loggedInAccountIndex, "gender", accountCsvFile) == "male")
     	{
     		genderFactor = 1.0f;
     	}
@@ -743,15 +743,15 @@ public class App extends Application {
     	}else if(goal_weight<weight){
     		dailyNutriKCalTotal -= 500;
     	}
-    	if(!readAccount(loggedInAccountIndex,"login").equals(LocalDate.now()+"")) {
+    	if(!readAccount(loggedInAccountIndex,"login", accountCsvFile).equals(LocalDate.now()+"")) {
     		editAccount("0", 5);
     	}
-    	float dailyNutriKCalCurrent = Float.parseFloat(readAccount(loggedInAccountIndex, "nutritions_day"));
+    	float dailyNutriKCalCurrent = Float.parseFloat(readAccount(loggedInAccountIndex, "nutritions_day", accountCsvFile));
     	float dailyNutriKCalDelta = dailyNutriKCalTotal - dailyNutriKCalCurrent;
     	homeNutriLabel.setText("Kcal per day for you: " + String.format("%.0f", dailyNutriKCalTotal) +
     						 "\nKcal already consumed today: " + String.format("%.0f", dailyNutriKCalCurrent) +
     						 "\nKcal still left for today: " + String.format("%.0f", dailyNutriKCalDelta));
-    	int streak = Integer.parseInt(readAccount(loggedInAccountIndex, "streak"));
+    	int streak = Integer.parseInt(readAccount(loggedInAccountIndex, "streak", accountCsvFile));
     	homeStreakLabel.setText("Your Streak: "+ streak+ " days");
     	//homeStreakLabel.setText("You used this application on " + String.format("%.0f", streak)+ " different days already.");
     	
@@ -769,16 +769,16 @@ public class App extends Application {
     // -----------------------------------------------------------------------------------
 	// Changes AccountEditScene
     public void updateAccountEditScene() {
-    	accountsEditCurrentWeightLabel.setText("Current weight " + readAccount(loggedInAccountIndex, "weight") + " kg");
-    	accountsEditCurrentHeightLabel.setText("Current height " + readAccount(loggedInAccountIndex, "height") + " cm");
-    	accountsEditCurrentGenderLabel.setText("Current Gender: " + readAccount(loggedInAccountIndex, "gender"));   	
-    	accountsEditCurrentNameLabel.setText("Current name "+readAccount(loggedInAccountIndex, "name"));
-    	accountsEditCurrentGoalWeightLabel.setText("Current goal weight " + readAccount(loggedInAccountIndex, "goal_weight") + " kg");
+    	accountsEditCurrentWeightLabel.setText("Current weight " + readAccount(loggedInAccountIndex, "weight", accountCsvFile) + " kg");
+    	accountsEditCurrentHeightLabel.setText("Current height " + readAccount(loggedInAccountIndex, "height", accountCsvFile) + " cm");
+    	accountsEditCurrentGenderLabel.setText("Current Gender: " + readAccount(loggedInAccountIndex, "gender", accountCsvFile));
+    	accountsEditCurrentNameLabel.setText("Current name "+readAccount(loggedInAccountIndex, "name", accountCsvFile));
+    	accountsEditCurrentGoalWeightLabel.setText("Current goal weight " + readAccount(loggedInAccountIndex, "goal_weight", accountCsvFile) + " kg");
     }
     
     // -----------------------------------------------------------------------------------
 	// Returns value of given data from account with given index from the csv file
-  	public String readAccount(int index, String data)
+  	public String readAccount(int index, String data, String filePath)
  	{
  		// Returns all names from the csv file
  		String result = "Error, Account " + index + " with data " + data + "not found";
