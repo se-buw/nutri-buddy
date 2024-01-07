@@ -285,7 +285,7 @@ public class App extends Application {
 		accountListExplanationLabel.setFont(Font.font("Standart", 16d));
 
 		// ListView
-		accountsList.setItems(readAllAccounts("name"));
+		accountsList.setItems(readAllAccounts("name",accountCsvFile));
 		accountsList.setMaxWidth(400);
 		accountsList.setMaxHeight(100);
 
@@ -577,7 +577,7 @@ public class App extends Application {
         amountFood.setMaxWidth(400);
         
         // ListView
-        foodItemList2.setItems(readAllFoodItems());
+        foodItemList2.setItems(readAllFoodItems(accountCsvFile));
         foodItemList2.setMaxWidth(600);
         foodItemList2.setMaxHeight(250);
         
@@ -620,7 +620,7 @@ public class App extends Application {
         	try
         	{
         		inputValue += ",";
-        		addFoodItem(inputValue);
+        		addFoodItem(inputValue,accountCsvFile);
             	recipyAddingFoodFeedbackLabel.setText("Done!");
         	}
         	catch (NumberFormatException someError)
@@ -650,7 +650,7 @@ public class App extends Application {
         			String[] inputValuesSplit = inputValues[i].split("-");
         			String foodItem = inputValuesSplit[0].strip();
         			String foodAmount = inputValuesSplit[1].strip();
-        			if(searchFoodItem(foodItem) == -1)
+        			if(searchFoodItem(foodItem,accountCsvFile) == -1)
         			{
         				ok = false;
                 		recipyAddingRecipyFeedbackLabel.setText(inputValues[i] + "couldn't be found");
@@ -673,7 +673,7 @@ public class App extends Application {
         		}
         		if(ok)
         		{
-        			addFoodItem(inputValue);
+        			addFoodItem(inputValue,accountCsvFile);
                 	recipyAddingRecipyFeedbackLabel.setText("Done!");
         		}
         	}
@@ -686,7 +686,7 @@ public class App extends Application {
         recipyAddingRecipy.setMaxWidth(400);
         
         // ListView
-        foodItemList.setItems(readAllFoodItems());
+        foodItemList.setItems(readAllFoodItems(accountCsvFile));
         foodItemList.setMaxWidth(600);
         foodItemList.setMaxHeight(250);
         
@@ -764,7 +764,7 @@ public class App extends Application {
     public void updateMainMenuScene()
     {
     	// Updates the AccountsList
-    	accountsList.setItems(readAllAccounts("name"));
+    	accountsList.setItems(readAllAccounts("name",accountCsvFile));
     }
     // -----------------------------------------------------------------------------------
 	// Changes AccountEditScene
@@ -814,11 +814,11 @@ public class App extends Application {
   	
   	 // -----------------------------------------------------------------------------------
 	// Returns value of given data from all accounts from the csv file
-  	public ObservableList<String> readAllAccounts(String data)
+  	public ObservableList<String> readAllAccounts(String data, String filepath)
  	{
  		// Returns all names from the csv file
   		 ObservableList<String> result = FXCollections.observableArrayList();
- 		try (Reader reader = Files.newBufferedReader(Paths.get(accountCsvFile));
+ 		try (Reader reader = Files.newBufferedReader(Paths.get(filepath));
  				@SuppressWarnings("deprecation")
  				CSVParser csvParser = new CSVParser(reader,
  						CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());)
@@ -968,11 +968,11 @@ public class App extends Application {
   	
   	// -----------------------------------------------------------------------------------
 	// Returns all food items from csv
-  	public ObservableList<String> readAllFoodItems()
+  	public ObservableList<String> readAllFoodItems(String filePath)
  	{
  		// Returns all names from the csv file
   		ObservableList<String> result = FXCollections.observableArrayList();
- 		try (Reader reader = Files.newBufferedReader(Paths.get(foodItemCsvFile));
+ 		try (Reader reader = Files.newBufferedReader(Paths.get(filePath));
  				@SuppressWarnings("deprecation")
  				CSVParser csvParser = new CSVParser(reader,
  						CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());)
@@ -1012,11 +1012,11 @@ public class App extends Application {
   	
   	// -----------------------------------------------------------------------------------
  	
-  	public int addFoodItem(String foodItem)
+  	public int addFoodItem(String foodItem,String filePath)
   	{
   		// Adds a new account record to the accounts csv
   		int returnStatus = -1;
-  		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(foodItemCsvFile), StandardOpenOption.APPEND);
+  		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePath), StandardOpenOption.APPEND);
   				@SuppressWarnings("deprecation")
   				CSVPrinter csvPrinter = new CSVPrinter(writer,
   						CSVFormat.DEFAULT.withFirstRecordAsHeader());)
@@ -1024,7 +1024,7 @@ public class App extends Application {
   			// Add record after removing leading and trailing spaces
   			String[] foodData = foodItem.split(",");
   			// Adds account only if it didn't already exist
-  			if(searchFoodItem(foodData[0].strip()) == -1)
+  			if(searchFoodItem(foodData[0].strip(),filePath) == -1)
   			{
   	 			csvPrinter.printRecord(foodData[0].strip(), foodData[1].strip(), foodData[2].strip(), foodData[3].strip(), foodData[4].strip(), foodData[5].strip());
   	 			returnStatus = 1;
@@ -1043,10 +1043,10 @@ public class App extends Application {
   		  	
   	// -----------------------------------------------------------------------------------
   	// Searches for Food item by Name and returns index of found record; -1 if not found
-  	public int searchFoodItem(String name)
+  	public int searchFoodItem(String name, String filepath)
   	{
   		// Returns all names from the csv file
-  		try (Reader reader = Files.newBufferedReader(Paths.get(foodItemCsvFile));
+  		try (Reader reader = Files.newBufferedReader(Paths.get(filepath));
   				@SuppressWarnings("deprecation")
   				CSVParser csvParser = new CSVParser(reader,
   						CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());)
