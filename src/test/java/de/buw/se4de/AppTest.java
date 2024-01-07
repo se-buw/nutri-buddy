@@ -13,7 +13,7 @@ class AppTest {
     private App app;
     @BeforeAll
     static void setup() {
-
+//setup our csv files properly
         Platform.startup(() -> {
         });
         App setupApp = new App();
@@ -93,7 +93,7 @@ class AppTest {
     @Test
     void readAllAccountsWrongPath(){
         app = new App();
-        assertThrows(IllegalArgumentException.class, () ->app.readAllAccounts("nutritions", "src/test/resourcesTest/testFoodItems.csv"));
+        assertThrows(IllegalArgumentException.class, () ->app.readAllAccounts("weight", "src/test/resourcesTest/testFoodItems.csv"));
     }
     @Test
     void addFoodItem() {
@@ -108,8 +108,9 @@ class AppTest {
         app = new App();
         app.addFoodItem("apple,10,","src/test/resourcesTest/testFoodItems.csv");
         ObservableList<String> result = app.readAllFoodItems("src/test/resourcesTest/testFoodItems.csv");
-        assertEquals("apple,10,", result);
+        assertEquals("apple,10,", result.get(2)); //name,nutritions,ingredients is at 0 and apple,52 is at 1.
     }
+
 
     @Test
     void searchFoodItemNotFound(){
@@ -126,7 +127,7 @@ class AppTest {
         assertEquals(1, result);
     }
 
-
+//cleanup to clear the csv files
     @AfterAll
     static void cleanup() throws FileNotFoundException {
         String entryToKeep = "name,height,gender,weight,goal_weight,nutritions_day,login,streak";
