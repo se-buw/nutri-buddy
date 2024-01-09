@@ -620,7 +620,7 @@ public class App extends Application {
         	try
         	{
         		inputValue += ",";
-        		addFoodItem(inputValue,accountCsvFile);
+        		addFoodItem(inputValue,foodItemCsvFile);
             	recipyAddingFoodFeedbackLabel.setText("Done!");
         	}
         	catch (NumberFormatException someError)
@@ -650,7 +650,7 @@ public class App extends Application {
         			String[] inputValuesSplit = inputValues[i].split("-");
         			String foodItem = inputValuesSplit[0].strip();
         			String foodAmount = inputValuesSplit[1].strip();
-        			if(searchFoodItem(foodItem,accountCsvFile) == -1)
+        			if(searchFoodItem(foodItem,foodItemCsvFile) == -1)
         			{
         				ok = false;
                 		recipyAddingRecipyFeedbackLabel.setText(inputValues[i] + "couldn't be found");
@@ -673,7 +673,7 @@ public class App extends Application {
         		}
         		if(ok)
         		{
-        			addFoodItem(inputValue,accountCsvFile);
+        			addFoodItem(inputValue,foodItemCsvFile);
                 	recipyAddingRecipyFeedbackLabel.setText("Done!");
         		}
         	}
