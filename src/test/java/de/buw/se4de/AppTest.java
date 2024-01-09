@@ -48,7 +48,7 @@ class AppTest {
         app = new App();
         app.loggedInAccountIndex = 1;
         app.editAccount("female", 2,"src/test/resourcesTest/editTest.csv" );
-        String result = app.readAccount(1, "gender", "src/test/resources/editTest.csv");
+        String result = app.readAccount(1, "gender", "src/test/resourcesTest/editTest.csv");
         assertEquals("female", result);
 
     }

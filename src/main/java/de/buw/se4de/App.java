@@ -577,7 +577,7 @@ public class App extends Application {
         amountFood.setMaxWidth(400);
         
         // ListView
-        foodItemList2.setItems(readAllFoodItems(accountCsvFile));
+        foodItemList2.setItems(readAllFoodItems(foodItemCsvFile));
         foodItemList2.setMaxWidth(600);
         foodItemList2.setMaxHeight(250);
         
@@ -686,7 +686,7 @@ public class App extends Application {
         recipyAddingRecipy.setMaxWidth(400);
         
         // ListView
-        foodItemList.setItems(readAllFoodItems(accountCsvFile));
+        foodItemList.setItems(readAllFoodItems(foodItemCsvFile));
         foodItemList.setMaxWidth(600);
         foodItemList.setMaxHeight(250);
         
