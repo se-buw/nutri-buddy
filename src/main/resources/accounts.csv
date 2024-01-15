@@ -1,7 +1,7 @@
 name,height,gender,weight,goal_weight,nutritions_day,login,streak
 Anna,130,female,70,80,3276.0,2023-12-10,2
 alpha,570,female,553,5,0,2024-01-04,2
-Tom,185,male,74,72,1161.0,2023-12-10,1
-Fabian,177,male,88,75,0,0,0
+Tom,185,male,74,72,0,2023-12-10,1
+Fabian,200,female,88,75,0,0,0
 Marie,180,female,69,71,0,0,0
 Mai,160,male,56,100,21.0,2024-01-06,1

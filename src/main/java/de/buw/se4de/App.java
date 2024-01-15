@@ -257,12 +257,15 @@ public class App extends Application {
         // -----------------------------------------------------------------------------------
 		// Create scene contents for mainMenuScene
         // Buttons:
-		
+
+		AccountFile ACFile = new AccountFile();
+		Fooditems FIFile = new Fooditems();
+
 		switchSceneMainMenu2HomeBtn.setText("Login");
 		switchSceneMainMenu2HomeBtn.setOnAction(e->
 		{
 			String inputValue = accountsList.getSelectionModel().getSelectedItem();
-			int index = searchAccount(inputValue,accountCsvFile);
+			int index = ACFile.searchAccount(inputValue);
         	// Checks login status and outputs error or transitions to homeScene
         	loggedInAccountIndex = index;
         	updateHomeScene();
@@ -285,7 +288,7 @@ public class App extends Application {
 		accountListExplanationLabel.setFont(Font.font("Standart", 16d));
 
 		// ListView
-		accountsList.setItems(readAllAccounts("name",accountCsvFile));
+		accountsList.setItems(ACFile.readAllAccounts("name"));
 		accountsList.setMaxWidth(400);
 		accountsList.setMaxHeight(100);
 
@@ -317,9 +320,8 @@ public class App extends Application {
         accountInput.setOnAction(e->
         {
         	String inputValue = accountInput.getText();
-        	int status = addAccount(inputValue,accountCsvFile);
         	accountInput.setText("");
-        	if(status == -1)
+        	if(!ACFile.addAccount(inputValue))
         	{
         		accountsAddingFeedback.setText("Account already exists");
         	}
@@ -349,18 +351,18 @@ public class App extends Application {
         accountsEditAddingExplanation.setText("Change your user data here:");
         accountsEditAddingExplanation.setFont(Font.font("Standart", 16d));
         
-        String name = (readAccount(loggedInAccountIndex, "name", accountCsvFile));
+        String name = (ACFile.readAccount(loggedInAccountIndex, "name"));
         accountsEditCurrentNameLabel.setText(name);
         accountsEditCurrentNameLabel.setFont(Font.font("Standart", 16d));
-        String height = (readAccount(loggedInAccountIndex, "height", accountCsvFile));
+        String height = (ACFile.readAccount(loggedInAccountIndex, "height"));
         accountsEditCurrentHeightLabel.setText(height + " m");
         accountsEditCurrentHeightLabel.setFont(Font.font("Standart", 16d));
         accountsEditCurrentWeightLabel.setText("");
         accountsEditCurrentWeightLabel.setFont(Font.font("Standart", 16d));
-        String gender = (readAccount(loggedInAccountIndex, "gender", accountCsvFile));
+        String gender = (ACFile.readAccount(loggedInAccountIndex, "gender"));
         accountsEditCurrentGenderLabel.setText(gender);
         accountsEditCurrentGenderLabel.setFont(Font.font("Standart", 16d));
-        String goalweight = (readAccount(loggedInAccountIndex, "goal_weight", accountCsvFile));
+        String goalweight = (ACFile.readAccount(loggedInAccountIndex, "goal_weight"));
         accountsEditCurrentGoalWeightLabel.setText(goalweight+ " kg");
         accountsEditCurrentGoalWeightLabel.setFont(Font.font("Standart", 16d));
         
@@ -386,14 +388,14 @@ public class App extends Application {
         accountEditInputName.setOnAction(e->
         {
         	String inputValue = accountEditInputName.getText();
-        	if(searchAccount(inputValue,accountCsvFile) != -1)
+        	if(ACFile.searchAccount(inputValue) != -1)
         	{
         		accountsEditAddingNameFeedback.setText("Account already exists!");
         	}
         	else
         	{
         		accountsEditAddingNameFeedback.setText("Done!");
-        		editAccount(inputValue, 0,accountCsvFile);
+				ACFile.editAccount(inputValue, 0);
         		updateAccountEditScene();
         		
         	}
@@ -409,7 +411,7 @@ public class App extends Application {
         	try
         	{
         		Float.parseFloat(inputValue);
-        		editAccount(inputValue, 1,accountCsvFile);
+				ACFile.editAccount(inputValue, 1);
         		accountsEditAddingHeightFeedback.setText("Done!");
         		updateAccountEditScene();
         	}
@@ -421,11 +423,11 @@ public class App extends Application {
         });
         accountEditInputHeight.setMaxWidth(400);
         maleRBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
-        	editAccount("male", 2,accountCsvFile);
+			ACFile.editAccount("male", 2);
         	updateAccountEditScene();
         });
         femaleRBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
-        	editAccount("female", 2,accountCsvFile);
+			ACFile.editAccount("female", 2);
         	updateAccountEditScene();
         });
         
@@ -439,7 +441,7 @@ public class App extends Application {
         	try
         	{
         		Float.parseFloat(inputValue);
-            	editAccount(inputValue, 3,accountCsvFile);
+				ACFile.editAccount(inputValue, 3);
         		accountsEditAddingWeightFeedback.setText("Done!");
         		updateAccountEditScene();
         	}
@@ -459,7 +461,7 @@ public class App extends Application {
         	try
         	{
         		Float.parseFloat(inputValue);
-            	editAccount(inputValue, 4,accountCsvFile);
+				ACFile.editAccount(inputValue, 4);
         		accountsEditAddingGoalWeightFeedback.setText("Done!");
         		updateAccountEditScene();
         	}
@@ -512,7 +514,7 @@ public class App extends Application {
         homeNutriLabel.setFont(Font.font("Standart", 16d));
         homeStreakLabel.setText("");
         homeStreakLabel.setFont(Font.font("Standart", 16d));
-        foodfactLabel.setText(foodFact());
+        foodfactLabel.setText(FIFile.foodFact());
         foodfactLabel.setFont(Font.font("Standart", 16d));
         foodfactLabel.setTextFill(Color.DARKVIOLET);
         foodfactExplanation.setText("Healthy #FoodFacts");
@@ -545,14 +547,14 @@ public class App extends Application {
         	
         		float kcalper100gramm = Float.parseFloat(result);
         		float calculation = (weightfood/100) * (kcalper100gramm);
-        		float dailyNutriKCal = Float.parseFloat(readAccount(loggedInAccountIndex, "nutritions_day", accountCsvFile));
+        		float dailyNutriKCal = Float.parseFloat(ACFile.readAccount(loggedInAccountIndex, "nutritions_day"));
         		String dailyNutriKCalUpdatet = dailyNutriKCal +calculation + "";
-        		editAccount(dailyNutriKCalUpdatet, 5,accountCsvFile);
+				ACFile.editAccount(dailyNutriKCalUpdatet, 5);
         		
-        		if(!readAccount(loggedInAccountIndex,"login", accountCsvFile).equals(LocalDate.now()+"")) {
-        			editAccount(LocalDate.now()+"", 6,accountCsvFile);
-        			int streak = Integer.parseInt(readAccount(loggedInAccountIndex, "streak", accountCsvFile)) + 1;
-        			editAccount(streak + "", 7,accountCsvFile);
+        		if(!ACFile.readAccount(loggedInAccountIndex,"login").equals(LocalDate.now()+"")) {
+					ACFile.editAccount(LocalDate.now()+"", 6);
+        			int streak = Integer.parseInt(ACFile.readAccount(loggedInAccountIndex, "streak")) + 1;
+					ACFile.editAccount(streak + "", 7);
         		}
         		updateHomeScene();
         
@@ -577,7 +579,7 @@ public class App extends Application {
         amountFood.setMaxWidth(400);
         
         // ListView
-        foodItemList2.setItems(readAllFoodItems(foodItemCsvFile));
+        foodItemList2.setItems(FIFile.readAllFoodItems());
         foodItemList2.setMaxWidth(600);
         foodItemList2.setMaxHeight(250);
         
@@ -620,7 +622,7 @@ public class App extends Application {
         	try
         	{
         		inputValue += ",";
-        		addFoodItem(inputValue,foodItemCsvFile);
+        		FIFile.addFoodItem(inputValue);
             	recipyAddingFoodFeedbackLabel.setText("Done!");
         	}
         	catch (NumberFormatException someError)
@@ -650,7 +652,7 @@ public class App extends Application {
         			String[] inputValuesSplit = inputValues[i].split("-");
         			String foodItem = inputValuesSplit[0].strip();
         			String foodAmount = inputValuesSplit[1].strip();
-        			if(searchFoodItem(foodItem,foodItemCsvFile) == -1)
+        			if(FIFile.searchFoodItem(foodItem) == -1)
         			{
         				ok = false;
                 		recipyAddingRecipyFeedbackLabel.setText(inputValues[i] + "couldn't be found");
@@ -673,7 +675,7 @@ public class App extends Application {
         		}
         		if(ok)
         		{
-        			addFoodItem(inputValue,foodItemCsvFile);
+        			FIFile.addFoodItem(inputValue);
                 	recipyAddingRecipyFeedbackLabel.setText("Done!");
         		}
         	}
@@ -686,7 +688,7 @@ public class App extends Application {
         recipyAddingRecipy.setMaxWidth(400);
         
         // ListView
-        foodItemList.setItems(readAllFoodItems(foodItemCsvFile));
+        foodItemList.setItems(FIFile.readAllFoodItems());
         foodItemList.setMaxWidth(600);
         foodItemList.setMaxHeight(250);
         
@@ -776,7 +778,25 @@ public class App extends Application {
     	accountsEditCurrentGoalWeightLabel.setText("Current goal weight " + readAccount(loggedInAccountIndex, "goal_weight", accountCsvFile) + " kg");
     }
     
-    // -----------------------------------------------------------------------------------
+    // --------------
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//---------------------------------------------------------------------
+
 	// Returns value of given data from account with given index from the csv file
   	public String readAccount(int index, String data, String filePath)
  	{
@@ -1104,5 +1124,5 @@ public class App extends Application {
   		}
   		return "couldnt generate a fact" ;
   	}
-  	
+
 }
