@@ -23,6 +23,7 @@ class AccountFile{
     private static final String accountCsvFile = "src/main/resources/accounts.csv";
     final Path path = Paths.get(accountCsvFile);
 
+    //Fehlermeldung bei fehlendem Account
     public String readAccount(int index, String data)
     {
         // Returns all names from the csv file

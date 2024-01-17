@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Random;
 
-class FoodItemFile{
+class zweitesFoodfile{
 
     private static final String fooditemCsvFile = "src/main/resources/food_items.csv";
     final Path path = Paths.get(fooditemCsvFile);
@@ -31,14 +31,12 @@ class FoodItemFile{
             // Reading data from record
             for (CSVRecord csvRecord : csvParser)
             {
-                String currentFood = csvRecord.get("name");
+                String currentFood = csvRecord.get(0); // Annahme: Die Lebensmittelinformationen befinden sich in der ersten Spalte der CSV
+
                 if (currentFood.equals(food))
                 {
-                    String nutritionsValue = csvRecord.get("nutritions");
-                    if (!nutritionsValue.isEmpty()) {
-                        result = nutritionsValue;
-                    }
-                    break;
+                    result = csvRecord.get(1); // Der zweite Wert (Index 1) in der CSV-Spalte "nutritions"
+                    break; // Beenden Sie die Schleife, wenn das gewünschte Lebensmittel gefunden wurde
                 }
             }
         }
@@ -50,7 +48,6 @@ class FoodItemFile{
         return result;
     }
 
-
     public ObservableList<String> readAllFoodItems()
     {
         // Returns all names from the csv file
@@ -58,7 +55,7 @@ class FoodItemFile{
         try (Reader reader = Files.newBufferedReader(path);
              @SuppressWarnings("deprecation")
              CSVParser csvParser = new CSVParser(reader,
-                     CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());)
+                     CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim()))
         {
             // Reading data from record
             for (CSVRecord csvRecord : csvParser)
@@ -72,9 +69,8 @@ class FoodItemFile{
                     String ingredientsOutputString = "";
                     String ingredientsOneString = csvRecord.get(2);
                     String[] ingredientsArray = ingredientsOneString.split(" ");
-                    for(int i = 0; i < ingredientsArray.length; ++i)
-                    {
-                        String[] ingredientAmountSep = ingredientsArray[i].split("_");
+                    for (String s : ingredientsArray) {
+                        String[] ingredientAmountSep = s.split("_");
                         ingredientsOutputString += ", " + ingredientAmountSep[1] + "g " + ingredientAmountSep[0];
                     }
                     result.add(csvRecord.get(0) + " | Kcal: " +  csvRecord.get(1) + " | Ingredients: " + ingredientsOutputString);
@@ -99,7 +95,7 @@ class FoodItemFile{
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.APPEND);
              @SuppressWarnings("deprecation")
              CSVPrinter csvPrinter = new CSVPrinter(writer,
-                     CSVFormat.DEFAULT.withFirstRecordAsHeader());)
+                     CSVFormat.DEFAULT.withFirstRecordAsHeader()))
         {
             // Add record after removing leading and trailing spaces
             String[] foodData = foodItem.split(",");
@@ -125,7 +121,7 @@ class FoodItemFile{
         try (Reader reader = Files.newBufferedReader(path);
              @SuppressWarnings("deprecation")
              CSVParser csvParser = new CSVParser(reader,
-                     CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());)
+                     CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim()))
         {
             // Reading
             int i = 0;
@@ -154,7 +150,7 @@ class FoodItemFile{
         try (Reader reader = Files.newBufferedReader(path);
              @SuppressWarnings("deprecation")
              CSVParser csvParser = new CSVParser(reader,
-                     CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());)
+                     CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim()))
         {
             // Reading
             Random rand = new Random();

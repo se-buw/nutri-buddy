@@ -12,11 +12,6 @@
  * https://www.weightwatchers.com/de/blog/abnehmen/kaloriendefizit-berechnen?g_acctid=134-402-0309&g_adid=0&g_adtype=search&g_campaign=Generic-Retargeting-Lapsed__qdstw_qobjc_qbudc_qaudl_qrtgn_qpma_qostz_qdevz_qlobr_qgeon_qkwn&g_campaignid=16913307293&g_keyword=&g_acctid=DEFAULT&g_adgroupid=&g_adid=&g_adtype=account&g_adtype=&g_campaign=DEFAULT&g_campaignid=17516152055&g_device=c&g_ifcreative=&g_ifproduct=&g_keyword=&g_keywordid=&g_locinterest=&g_locphysical=9042841&g_merchantid=&g_network=x&g_partition=&g_placement=&g_productchannel=&g_productid=&gad_source=1&gclid=CjwKCAiA04arBhAkEiwAuNOsIoObmn2riIhoo7zZyUnnb3pF0Jc6cFIyWTMobKqN9H7uqFIzzV_QjRoCNYQQAvD_BwE&gclsrc=aw.ds
  */
 package de.buw.se4de;
-
-// Importing Stuff
-
-// CVS Manipulation
-
 // JavaFX
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -62,6 +57,7 @@ public class App extends Application {
     {
         AccountFile ACFile = new AccountFile();
         AccountData ACData = new AccountData();
+        zweitesFoodfile FIFile = new zweitesFoodfile();
 
 
 
@@ -160,17 +156,6 @@ public class App extends Application {
         Label homeStreakLa = new Label();{
         homeStreakLa.setFont(BTFont);}
 
-        /*Label homeBMILa = new Label("Your BMI: " + String.format("%.0f", ACData.get_bmi(ACFile)));{
-        homeBMILa.setFont(BTFont);}
-
-        Label homeNutriLa = new Label("Kcal per day for you: " + String.format("%.0f", ACData.get_daily_kcal(ACFile)) +
-                "\nKcal already consumed today: " + String.format("%.0f", ACData.get_ate_kcal(ACFile, 0)) +
-                "\nKcal still left for today: " + String.format("%.0f", ACData.get_left_kcal(ACFile)));{
-        homeNutriLa.setFont(BTFont);}
-
-        Label homeStreakLa = new Label("Your Streak: " + ACData.get_streak(ACFile)+ " days");{
-        homeStreakLa.setFont(BTFont);}*/
-
         Label homefoodfactLa = new Label("test");{
         homefoodfactLa.setFont(Font.font("Standard", 16));
         homefoodfactLa.setTextFill(Color.PURPLE);}
@@ -197,8 +182,8 @@ public class App extends Application {
 
 
 
-        //Oberfläche für home
-        //Declare Content for homeScene
+        //Oberfläche für tracking
+        //Declare Content for trackingScene
 
         Button tracking2homeBT = new Button("Home");{
         tracking2homeBT.setFont(BTFont);}
@@ -208,7 +193,9 @@ public class App extends Application {
         trackingHeadlineLA.setFont(Font.font("Standard", 24));}
         Label trackingChoosenFoodLA = new Label("I ate");{
         trackingChoosenFoodLA.setFont(BTFont);}
+
         ListView<String> trackingFoodItemLV = new ListView<>();{
+        trackingFoodItemLV.setItems(FIFile.readAllFoodItems());
         trackingFoodItemLV.setPrefHeight(150);
         trackingFoodItemLV.setMaxWidth(400);}
 
@@ -226,11 +213,8 @@ public class App extends Application {
         trackingPane.setBackground(background);
 
 
-
-
-
-        //Oberfläche für editScene
-        //Declare Content for editScene
+        //Oberfläche für settingsScene
+        //Declare Content for settingsScene
         Button settingsEdit2HomeBT = new Button("Home");
         settingsEdit2HomeBT.setFont(BTFont);
 
@@ -299,19 +283,30 @@ public class App extends Application {
         Scene mainMenuScene = new Scene(menuPane, screenSizeX, screenSizeY);
         Scene editScene = new Scene(editPane, screenSizeX, screenSizeY);
 
-
-
-
-//Buttons
+//Textfield
 
         settingsHeightTF.setOnAction(e -> {
             ACFile.editAccount(settingsHeightTF.getText(), 1, ACData.getIndex_());
             ACData.update_edit(ACFile,settingsNameLa, settingsHeightLa, settingsGenderLa, settingsWeightLa, settingsGoalWeightLa);
+            settingsHeightTF.setText("");
         });
 
         settingsNameTF.setOnAction(e -> {
             ACFile.editAccount(settingsNameTF.getText(), 0, ACData.getIndex_());
             ACData.update_edit(ACFile,settingsNameLa, settingsHeightLa, settingsGenderLa, settingsWeightLa, settingsGoalWeightLa);
+            settingsNameTF.setText("");
+        });
+
+        settingsGoalWeightTF.setOnAction(e -> {
+            ACFile.editAccount(settingsGoalWeightTF.getText(), 4, ACData.getIndex_());
+            ACData.update_edit(ACFile,settingsNameLa, settingsHeightLa, settingsGenderLa, settingsWeightLa, settingsGoalWeightLa);
+            settingsGoalWeightTF.setText("");
+        });
+
+        settingsWeightTF.setOnAction(e -> {
+            ACFile.editAccount(settingsWeightTF.getText(), 3, ACData.getIndex_());
+            ACData.update_edit(ACFile,settingsNameLa, settingsHeightLa, settingsGenderLa, settingsWeightLa, settingsGoalWeightLa);
+            settingsWeightTF.setText("");
         });
 
         settingsMaleRB.setOnAction(e -> {
@@ -324,24 +319,17 @@ public class App extends Application {
             ACData.update_edit(ACFile,settingsNameLa, settingsHeightLa, settingsGenderLa, settingsWeightLa, settingsGoalWeightLa);
         });
 
-        settingsGoalWeightTF.setOnAction(e -> {
-            ACFile.editAccount(settingsGoalWeightTF.getText(), 4, ACData.getIndex_());
-            ACData.update_edit(ACFile,settingsNameLa, settingsHeightLa, settingsGenderLa, settingsWeightLa, settingsGoalWeightLa);
-        });
-
-        settingsWeightTF.setOnAction(e -> {
-            ACFile.editAccount(settingsWeightTF.getText(), 3, ACData.getIndex_());
-            ACData.update_edit(ACFile,settingsNameLa, settingsHeightLa, settingsGenderLa, settingsWeightLa, settingsGoalWeightLa);
-        });
-
+//Buttons
         menuLoginBt.setOnAction(e -> {
             stage.setScene(homeScene);
             String inputValue = menuListView.getSelectionModel().getSelectedItem();
             int index = ACFile.searchAccount(inputValue);
             ACData.setIndex(index);
-            ACData.update_streak(ACFile);
             ACData.update_account(ACFile, homeBMILa, homeNutriLa, homeStreakLa);
-        });//tun
+            ACData.update_streak(ACFile);
+            ACData.update_kcal(ACFile,0);
+            ACData.update_account(ACFile, homeBMILa, homeNutriLa, homeStreakLa);
+        });
 
         menuCreateBt.setOnAction(e -> stage.setScene(newAccountScene));
 
@@ -350,8 +338,23 @@ public class App extends Application {
             ACData.update_account(ACFile, homeBMILa, homeNutriLa, homeStreakLa);
         });
 
-        tracking2homeBT.setOnAction(e -> {stage.setScene(homeScene);});
-        //trackingAddFoodBT.setOnAction(e -> {});
+        tracking2homeBT.setOnAction(e -> {
+            stage.setScene(homeScene);
+            ACData.update_account(ACFile, homeBMILa, homeNutriLa, homeStreakLa);
+        });
+        trackingAddFoodBT.setOnAction(e -> {
+           float amount = Float.parseFloat(trackingAmountTF.getText());
+           String fooditem_line = trackingFoodItemLV.getSelectionModel().getSelectedItem();
+           int index = fooditem_line.indexOf(" ");
+           String fooditem = (index != -1)
+                   ? fooditem_line.substring(0, index)
+                   : fooditem_line;
+           float kcal_value = Float.parseFloat(FIFile.get_Nutritions(fooditem))/100;
+           System.out.println(kcal_value);
+           float consumed_amount = amount * kcal_value;
+           ACData.update_kcal(ACFile, consumed_amount);
+           trackingAmountTF.setText("");
+        });
 
         home2TrackCalories.setOnAction(e -> stage.setScene(trackingScene));//tun
         home2settings.setOnAction(e -> {
@@ -375,21 +378,7 @@ public class App extends Application {
             newAccInputTF.setText("");
             menuListView.setItems(ACFile.readAllAccounts("name"));});
 
-        newAccHomeMBt.setOnAction(e -> {stage.setScene(mainMenuScene);});//tun
-
-
-
-
-
-
-
-//Textfelder
-        trackingAmountTF.setOnAction(e -> {});
-
-
-
-
-
+        newAccHomeMBt.setOnAction(e -> stage.setScene(mainMenuScene));//tun
 
         // Set scene
         stage.setScene(mainMenuScene);
@@ -397,10 +386,4 @@ public class App extends Application {
         stage.show();
 
     }
-
-
-
-
-
-
 }
