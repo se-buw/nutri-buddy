@@ -18,9 +18,16 @@ import java.util.Random;
 
 class zweitesFoodfile{
 
-    private static final String fooditemCsvFile = "src/main/resources/food_items.csv";
-    final Path path = Paths.get(fooditemCsvFile);
+    //private /*static final*/ String fooditemCsvFile = "src/main/resources/food_items.csv";
+    //final Path path = Paths.get(fooditemCsvFile);
 
+    private String fooditemCsvFile;
+    private Path path;
+
+    zweitesFoodfile(String fooditemCsvFile){
+        this.fooditemCsvFile = fooditemCsvFile;
+        path = Paths.get(fooditemCsvFile);
+    }
     public String get_Nutritions(String food) {
         String result = "";
 

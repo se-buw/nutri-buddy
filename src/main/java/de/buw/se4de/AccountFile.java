@@ -19,8 +19,16 @@ import java.util.ArrayList;
 
 class AccountFile{
 
-    private static final String accountCsvFile = "src/main/resources/accounts.csv";
-    final Path path = Paths.get(accountCsvFile);
+    //private /*static final*/ String accountCsvFile = "src/main/resources/accounts.csv";
+    //final Path path = Paths.get(accountCsvFile);
+
+    private String accountCsvFile;
+    private Path path;
+
+    AccountFile(String accountCsvFile){
+        this.accountCsvFile = accountCsvFile;
+        path = Paths.get(accountCsvFile);
+    }
 
     //Fehlermeldung bei fehlendem Account
     public String readAccount(int index, String data)

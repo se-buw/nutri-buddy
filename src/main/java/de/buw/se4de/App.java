@@ -55,9 +55,9 @@ public class App extends Application {
     @Override
     public void start(Stage stage)
     {
-        AccountFile ACFile = new AccountFile();
+        AccountFile ACFile = new AccountFile("src/main/resources/accounts.csv");
         AccountData ACData = new AccountData();
-        zweitesFoodfile FIFile = new zweitesFoodfile();
+        zweitesFoodfile FIFile = new zweitesFoodfile("src/main/resources/food_items.csv");
         FoodfactsFile FFFile = new FoodfactsFile();
 
 
