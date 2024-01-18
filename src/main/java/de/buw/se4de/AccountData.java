@@ -1,6 +1,8 @@
 package de.buw.se4de;
 
 import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -73,8 +75,15 @@ class AccountData{
     public void setIndex(int Index){Index_ = Index;};
 
     public void update_account(AccountFile ACFile, Label BMI, Label Nutri, Label Streak){
-        System.out.println(get_bmi(ACFile));
-        BMI.setText("Your BMI: " + String.format("%f", get_bmi(ACFile)));
+        float bmi = get_bmi(ACFile);
+        if(bmi < 18.5f || bmi > 35.0f){
+            BMI.setTextFill(Color.RED);
+        }else if(bmi < 25.0f){
+            BMI.setTextFill(Color.GREEN);
+        }else{
+            BMI.setTextFill(Color.DARKKHAKI);
+        }
+        BMI.setText("Your BMI: " + String.format("%.2f", get_bmi(ACFile)));
         Nutri.setText("Kcal per day for you: " + String.format("%.0f", get_daily_kcal(ACFile)) +
                 "\nKcal already consumed today: " + String.format("%.0f", get_ate_kcal(ACFile)) +
                 "\nKcal still left for today: " + String.format("%.0f", get_left_kcal(ACFile)));
