@@ -67,7 +67,7 @@ class AccountData{
         }
         int streak = Integer.parseInt(ACFile.readAccount(Index_, "streak"));
         String new_streak = Integer.toString(streak);
-        ACFile.editAccount(new_streak, Index_, 7);
+        ACFile.editAccount(new_streak, 7, Index_);
     };
 
     public void setIndex(int Index){Index_ = Index;};

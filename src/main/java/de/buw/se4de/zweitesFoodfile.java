@@ -97,12 +97,14 @@ class zweitesFoodfile{
              CSVPrinter csvPrinter = new CSVPrinter(writer,
                      CSVFormat.DEFAULT.withFirstRecordAsHeader()))
         {
+            foodItem = foodItem.concat(", ");
             // Add record after removing leading and trailing spaces
+            System.out.println(foodItem);
             String[] foodData = foodItem.split(",");
             // Adds account only if it didn't already exist
             if(searchFoodItem(foodData[0].strip()) == -1)
             {
-                csvPrinter.printRecord(foodData[0].strip(), foodData[1].strip(), foodData[2].strip(), foodData[3].strip(), foodData[4].strip(), foodData[5].strip());
+                csvPrinter.printRecord(foodData[0].strip(), foodData[1].strip(), foodData[2].strip());
                 returnStatus = 1;
             }
         }

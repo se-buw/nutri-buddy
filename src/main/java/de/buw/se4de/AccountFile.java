@@ -19,7 +19,6 @@ import java.util.ArrayList;
 
 class AccountFile{
 
-
     private static final String accountCsvFile = "src/main/resources/accounts.csv";
     final Path path = Paths.get(accountCsvFile);
 

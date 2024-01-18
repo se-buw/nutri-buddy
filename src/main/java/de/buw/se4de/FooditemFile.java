@@ -101,12 +101,15 @@ class FoodItemFile{
              CSVPrinter csvPrinter = new CSVPrinter(writer,
                      CSVFormat.DEFAULT.withFirstRecordAsHeader());)
         {
+            foodItem = foodItem.concat(", ");
+            System.out.println(foodItem);
             // Add record after removing leading and trailing spaces
             String[] foodData = foodItem.split(",");
             // Adds account only if it didn't already exist
+
             if(searchFoodItem(foodData[0].strip()) == -1)
             {
-                csvPrinter.printRecord(foodData[0].strip(), foodData[1].strip(), foodData[2].strip(), foodData[3].strip(), foodData[4].strip(), foodData[5].strip());
+                csvPrinter.printRecord(foodData[0].strip(), foodData[1].strip(), foodData[2].strip());
                 returnStatus = 1;
             }
         }

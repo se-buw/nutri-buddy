@@ -58,7 +58,7 @@ public class App extends Application {
         AccountFile ACFile = new AccountFile();
         AccountData ACData = new AccountData();
         zweitesFoodfile FIFile = new zweitesFoodfile();
-
+        FoodfactsFile FFFile = new FoodfactsFile();
 
 
 
@@ -156,18 +156,18 @@ public class App extends Application {
         Label homeStreakLa = new Label();{
         homeStreakLa.setFont(BTFont);}
 
-        Label homefoodfactLa = new Label("test");{
+        Label homefoodfactLa = new Label(FFFile.foodFact());{
         homefoodfactLa.setFont(Font.font("Standard", 16));
-        homefoodfactLa.setTextFill(Color.PURPLE);}
+        homefoodfactLa.setTextFill(Color.DARKOLIVEGREEN);}
 
         Button home2settings = new Button("Settings");{
         home2settings.setFont(BTFont);}
         Button home2TrackCalories = new Button("Track Calories");{
         home2TrackCalories.setFont(BTFont);}
-        Button home2recipies = new Button("Recipies");{
-        home2recipies.setFont(BTFont);}
+        Button home2recipes = new Button("Recipies");{
+        home2recipes.setFont(BTFont);}
 
-        HBox homeHBox = new HBox(25,home2settings, home2recipies);{
+        HBox homeHBox = new HBox(25,home2settings, home2recipes);{
         homeHBox.setAlignment(Pos.BOTTOM_CENTER);
         homeHBox.setTranslateY(30);}
 
@@ -263,11 +263,17 @@ public class App extends Application {
         }//edit goal weight
 
         VBox settingNameVBox = new VBox(settingsNameLa, settingsNameTF);
+        settingNameVBox.setAlignment(Pos.TOP_CENTER);
         VBox settingHeightVBox = new VBox(settingsHeightLa, settingsHeightTF);
+        settingHeightVBox.setAlignment(Pos.TOP_CENTER);
         HBox settingGenderHBox = new HBox(settingsFemaleRB, settingsMaleRB);
+        settingGenderHBox.setAlignment(Pos.TOP_CENTER);
         VBox settingGenderVBox = new VBox(settingsGenderLa, settingGenderHBox);
+        settingGenderVBox.setAlignment(Pos.TOP_CENTER);
         VBox settingWeightVBox = new VBox(settingsWeightLa, settingsWeightTF);
+        settingWeightVBox.setAlignment(Pos.TOP_CENTER);
         VBox settingGoalWeightVBox = new VBox(settingsGoalWeightLa, settingsGoalWeightTF);
+        settingGoalWeightVBox.setAlignment(Pos.TOP_CENTER);
 
         VBox settingsVBox = new VBox(50,settingsHeadlineLa, settingNameVBox, settingHeightVBox, settingGenderVBox, settingWeightVBox, settingGoalWeightVBox, settingsEdit2HomeBT);
         settingsVBox.setAlignment(Pos.TOP_CENTER);
@@ -276,12 +282,53 @@ public class App extends Application {
         StackPane editPane = new StackPane(settingsVBox);
         editPane.setBackground(background);
 
+        //Recipe scene
+        Label recipeHeadlineLa = new Label("Recipes");{
+            recipeHeadlineLa.setFont(Font.font("Standard", 24));
+        }
+
+        ListView recipeListView = new ListView<>();{
+            recipeListView.setItems(FIFile.readAllFoodItems());
+            recipeListView.setPrefHeight(100);
+            recipeListView.setMaxWidth(400);
+        }
+
+        Label recipeNewFoodLa = new Label("""
+                Add new food item in this order:
+                name, nutritional value(seperated by commas)
+                this is meant for basic ingredients, not recipies""");{
+             recipeNewFoodLa.setFont(BTFont);}
+        TextField recipeNewFoodTF = new TextField("");{
+            recipeNewFoodTF.setMaxWidth(400);
+        }
+        Label recipeNewRecipeLa = new Label("""
+                Add new recipy in this order:
+                [name], [name of the ingredient Nr.1]-[ammount in grams], 
+                [name of the ingredient Nr.2]-[ammount in grams], ...
+                (seperated by commas)
+                this is meant for recipies""");{
+        recipeNewRecipeLa.setFont(BTFont);}
+        TextField recipeNewRecipeTF = new TextField("");{
+            recipeNewRecipeTF.setMaxWidth(400);}
+
+        Button recipe2homeBT = new Button("Home Menu");{
+        recipe2homeBT.setFont(BTFont);}
+
+        VBox recipeVBox = new VBox(35,recipeHeadlineLa, recipeListView,recipeNewFoodLa, recipeNewFoodTF, recipeNewRecipeLa, recipeNewRecipeTF, recipe2homeBT);
+        recipeVBox.setAlignment(Pos.TOP_CENTER);
+        recipeVBox.setTranslateY(30);
+
+        StackPane recipePane = new StackPane(recipeVBox);
+        recipePane.setBackground(background);
+
+
 //Scenes
         Scene trackingScene = new Scene(trackingPane, screenSizeX, screenSizeY);
         Scene homeScene = new Scene(homePane, screenSizeX, screenSizeY);
         Scene newAccountScene = new Scene(newAccPane, screenSizeX, screenSizeY);
         Scene mainMenuScene = new Scene(menuPane, screenSizeX, screenSizeY);
         Scene editScene = new Scene(editPane, screenSizeX, screenSizeY);
+        Scene recipeScene = new Scene(recipePane, screenSizeX, screenSizeY);
 
 //Textfield
 
@@ -309,6 +356,17 @@ public class App extends Application {
             settingsWeightTF.setText("");
         });
 
+        recipeNewFoodTF.setOnAction(e -> {
+            FIFile.addFoodItem(recipeNewFoodTF.getText());
+            recipeNewFoodTF.setText("");
+        });
+        recipeNewRecipeTF.setOnAction(e -> {
+            FIFile.addFoodItem(recipeNewRecipeTF.getText());
+            recipeNewRecipeTF.setText("");
+        });
+
+//Radiobuttons
+
         settingsMaleRB.setOnAction(e -> {
             ACFile.editAccount(settingsMaleRB.getText(), 2, ACData.getIndex_());
             ACData.update_edit(ACFile,settingsNameLa, settingsHeightLa, settingsGenderLa, settingsWeightLa, settingsGoalWeightLa);
@@ -326,13 +384,14 @@ public class App extends Application {
             int index = ACFile.searchAccount(inputValue);
             ACData.setIndex(index);
             ACData.update_account(ACFile, homeBMILa, homeNutriLa, homeStreakLa);
-            ACData.update_streak(ACFile);
+            ACData.update_streak(ACFile);//////
             ACData.update_kcal(ACFile,0);
             ACData.update_account(ACFile, homeBMILa, homeNutriLa, homeStreakLa);
         });
 
         menuCreateBt.setOnAction(e -> stage.setScene(newAccountScene));
 
+        recipe2homeBT.setOnAction(e -> stage.setScene(homeScene));
         settingsEdit2HomeBT.setOnAction(e -> {
             stage.setScene(homeScene);
             ACData.update_account(ACFile, homeBMILa, homeNutriLa, homeStreakLa);
@@ -361,7 +420,7 @@ public class App extends Application {
             stage.setScene(editScene);
             ACData.update_edit(ACFile,settingsNameLa, settingsHeightLa, settingsGenderLa, settingsWeightLa, settingsGoalWeightLa);
         });
-        //home2recipies.setOnAction(e -> {});
+        home2recipes.setOnAction(e -> {stage.setScene(recipeScene);});
 
         newAccConfirmLA.setOnAction(e -> {
             String inputValue = newAccInputTF.getText();
