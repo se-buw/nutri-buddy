@@ -208,7 +208,7 @@ public class App extends Application {
         {
             home2TrackCalories.setFont(BTFont);
         }
-        Button home2recipes = new Button("Recipies");
+        Button home2recipes = new Button("Recipes");
         {
             home2recipes.setFont(BTFont);
         }
@@ -366,7 +366,7 @@ public class App extends Application {
         Label recipeNewFoodLa = new Label("""
                 Add new food item in this order:
                 [name], [kcal per 100g] (seperated by commas)
-                this is meant for basic ingredients, not recipies""");
+                this is meant for basic ingredients, not recipes""");
         {
             recipeNewFoodLa.setFont(BTFont);
         }
@@ -380,7 +380,7 @@ public class App extends Application {
                 [name of the ingredient Nr.1]_[ammount in grams] ...
                 (name, kcal, ingredientlist seperated by commas)
                 (ingredients seperated by blank)
-                this is meant for recipies""");
+                this is meant for recipes""");
         {
             recipeNewRecipeLa.setFont(BTFont);
         }
