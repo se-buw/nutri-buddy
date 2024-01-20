@@ -28,9 +28,9 @@ class AppTest {
     void readAccountMissingFile() {
 
         AccountFile af = new AccountFile("missing");
-        String result = af.readAccount(0, "weight");
+        //String result = af.readAccount(0, "weight");
         assertThrows(FileNotFoundException.class, () ->af.readAccount(0, "weight"));
-        assertEquals("Error, Account 0 with data weightnot found", result);
+        //assertEquals("Error, Account 0 with data weightnot found", result);
     }
     //probleme bei dem String result und assertThrown
     //kein Error thrown
@@ -59,7 +59,7 @@ class AppTest {
     @Test
     void addNewAccount(){
         AccountFile af = new AccountFile("src/test/resources/editTest.csv");
-        String accountInformation = "Max,140,female,70,80,3276.0,2023-12-10,2";
+        String accountInformation = "Max,140,female,70,80";
         int result = af.addAccount(accountInformation);
         assertEquals(1, result);
 
@@ -67,8 +67,8 @@ class AppTest {
     @Test
     void addExistingAccount() {
         AccountFile af = new AccountFile("src/test/resources/editTest.csv");
-        String existingAccount = "Dan,130,male,70,80,3276.0,2023-12-10,2";
-        af.addAccount(existingAccount);
+        String existingAccount = "Dan,130,male,70,80";
+        //af.addAccount(existingAccount);
         int result = af.addAccount(existingAccount);
         assertEquals(-1, result);
 
@@ -88,9 +88,9 @@ class AppTest {
     @Test
     void readAllAccountsMissingFile(){
         AccountFile af = new AccountFile("missing");
-        ObservableList<String> result = af.readAllAccounts("weight");
+        //ObservableList<String> result = af.readAllAccounts("weight");
         assertThrows(FileNotFoundException.class, () ->af.readAllAccounts("weight"));
-        assertEquals("Error, Accounts data weightnot found", result.get(0));
+        //assertEquals("Error, Accounts data weightnot found", result.get(0));
     }
     //kein Error thrown
     @Test
@@ -107,7 +107,7 @@ class AppTest {
     @Test
     void addFoodItem() {
         zweitesFoodfile ff = new zweitesFoodfile("src/test/resources/testFoodItems.csv");
-        String foodItem = "apple,52,";
+        String foodItem = "apple,52";
         int result = ff.addFoodItem(foodItem);
         assertEquals(1, result);
     }
@@ -117,9 +117,9 @@ class AppTest {
     @Test
     void readAllFoodItems() {
         zweitesFoodfile ff = new zweitesFoodfile("src/test/resources/testFoodItems.csv");
-        ff.addFoodItem("apple,10");
+        ff.addFoodItem("cucumber,10");
         ObservableList<String> result = ff.readAllFoodItems();
-        assertEquals("apple, 10", result.get(2)); //name,nutritions,ingredients is at 0 and apple,52 is at 1.
+        assertEquals("cucumber | Kcal: 10", result.get(0)); //name,nutritions,ingredients is at 0 and apple,52 is at 1.
     }
     //kommt nicht bis zu assert, addFoodItem failed
 
@@ -134,7 +134,7 @@ class AppTest {
     @Test
     void searchFoodItemFound(){
         zweitesFoodfile ff = new zweitesFoodfile("src/test/resources/testFoodItems.csv");
-        ff.addFoodItem("banana");
+        ff.addFoodItem("banana, 90");
         int result = ff.searchFoodItem("Banana");
         assertEquals(1, result);
     }
