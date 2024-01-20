@@ -76,9 +76,12 @@ class zweitesFoodfile{
                     String ingredientsOutputString = "";
                     String ingredientsOneString = csvRecord.get(2);
                     String[] ingredientsArray = ingredientsOneString.split(" ");
-                    for (String s : ingredientsArray) {
-                        String[] ingredientAmountSep = s.split("_");
-                        ingredientsOutputString += ", " + ingredientAmountSep[1] + "g " + ingredientAmountSep[0];
+                    for (int i = 0; i < ingredientsArray.length; i++){
+                        String[] ingredientAmountSep = ingredientsArray[i].split("_");
+                        ingredientsOutputString += ingredientAmountSep[1] + "g " + ingredientAmountSep[0];
+                        if(i < ingredientsArray.length - 1){
+                            ingredientsOutputString += ", ";
+                        }
                     }
                     result.add(csvRecord.get(0) + " | Kcal: " +  csvRecord.get(1) + " | Ingredients: " + ingredientsOutputString);
                 }
