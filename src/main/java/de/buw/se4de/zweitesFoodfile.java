@@ -126,6 +126,7 @@ class zweitesFoodfile{
     // Searches for Food item by Name and returns index of found record; -1 if not found
     public int searchFoodItem(String name)
     {
+        name = name.toLowerCase();
         // Returns all names from the csv file
         try (Reader reader = Files.newBufferedReader(path);
              @SuppressWarnings("deprecation")
@@ -136,7 +137,7 @@ class zweitesFoodfile{
             int i = 0;
             for (CSVRecord csvRecord : csvParser)
             {
-                String nameCheck = csvRecord.get("name");
+                String nameCheck = csvRecord.get("name").toLowerCase();
                 if(nameCheck.equals(name))
                 {
                     return i;
