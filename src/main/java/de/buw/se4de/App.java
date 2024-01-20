@@ -212,13 +212,18 @@ public class App extends Application {
             home2recipes.setFont(BTFont);
         }
 
+        Button home2menu = new Button("Logout");
+        {
+            home2menu.setFont(BTFont);
+        }
+
         HBox homeHBox = new HBox(25, home2settings, home2recipes);
         {
             homeHBox.setAlignment(Pos.BOTTOM_CENTER);
-            homeHBox.setTranslateY(30);
+            //homeHBox.setTranslateY(0);
         }
 
-        VBox homeVBox = new VBox(50, homeHeadlineLa, homeBMILa, homeNutriLa, homeStreakLa, home2TrackCalories, homefoodfactLa, homeHBox);
+        VBox homeVBox = new VBox(40, homeHeadlineLa, homeBMILa, homeNutriLa, homeStreakLa, home2TrackCalories, homefoodfactLa, homeHBox, home2menu);
         {
             homeVBox.setAlignment(Pos.TOP_CENTER);
             homeVBox.setTranslateY(30);
@@ -526,8 +531,13 @@ public class App extends Application {
             stage.setScene(editScene);
             ACData.update_edit(ACFile, settingsNameLa, settingsHeightLa, settingsGenderLa, settingsWeightLa, settingsGoalWeightLa);
         });
+
         home2recipes.setOnAction(e -> {
             stage.setScene(recipeScene);
+        });
+
+        home2menu.setOnAction(e -> {
+            stage.setScene(mainMenuScene);
         });
 
         newAccConfirmLA.setOnAction(e -> {
