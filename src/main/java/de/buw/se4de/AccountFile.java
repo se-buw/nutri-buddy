@@ -8,26 +8,33 @@ import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.util.ArrayList;
 
 
 class AccountFile{
 
-    private static final String accountCsvFile = "src/main/resources/accounts.csv";
-    final Path path = Paths.get(accountCsvFile);
+    //private /*static final*/ String accountCsvFile = "src/main/resources/accounts.csv";
+    //final Path path = Paths.get(accountCsvFile);
+
+    private String accountCsvFile;
+    private Path path;
+
+    AccountFile(String accountCsvFile){
+        this.accountCsvFile = accountCsvFile;
+        path = Paths.get(accountCsvFile);
+    }
 
     //Fehlermeldung bei fehlendem Account
-    public String readAccount(int index, String data)
+    public String readAccount(int index, String data)/* throws NoSuchFileException*/
     {
         // Returns all names from the csv file
         String result = "Error, Account " + index + " with data " + data + "not found";
         try (Reader reader = Files.newBufferedReader(path);
+
              @SuppressWarnings("deprecation")
              CSVParser csvParser = new CSVParser(reader,
                      CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim()))
@@ -46,6 +53,7 @@ class AccountFile{
         catch (IOException e)
         {
             e.printStackTrace();
+            //throw(new NoSuchFileException(accountCsvFile));
         }
 
         return result;
@@ -65,7 +73,7 @@ class AccountFile{
             account = account + ",0,0,0";
             String[] accountData = account.split(",");
             // Adds account only if it didn't already exist
-            if(searchAccount(accountData[0].strip()) == -1)
+            if(searchAccount(accountData[0].strip()) == -1 && accountData[0]!= "" && accountData[1]!= "" && accountData[2]!= "" && accountData[3]!= "" && accountData[4]!= "")
             {
                 csvPrinter.printRecord(accountData[0].strip(), accountData[1].strip(), accountData[2].strip(), accountData[3].strip(), accountData[4].strip(), accountData[5].strip(),accountData[6].strip(), accountData[7].strip());
                 returnStatus = 1;

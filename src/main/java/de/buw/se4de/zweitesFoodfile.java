@@ -18,9 +18,16 @@ import java.util.Random;
 
 class zweitesFoodfile{
 
-    private static final String fooditemCsvFile = "src/main/resources/food_items.csv";
-    final Path path = Paths.get(fooditemCsvFile);
+    //private /*static final*/ String fooditemCsvFile = "src/main/resources/food_items.csv";
+    //final Path path = Paths.get(fooditemCsvFile);
 
+    private String fooditemCsvFile;
+    private Path path;
+
+    zweitesFoodfile(String fooditemCsvFile){
+        this.fooditemCsvFile = fooditemCsvFile;
+        path = Paths.get(fooditemCsvFile);
+    }
     public String get_Nutritions(String food) {
         String result = "";
 
@@ -69,9 +76,12 @@ class zweitesFoodfile{
                     String ingredientsOutputString = "";
                     String ingredientsOneString = csvRecord.get(2);
                     String[] ingredientsArray = ingredientsOneString.split(" ");
-                    for (String s : ingredientsArray) {
-                        String[] ingredientAmountSep = s.split("_");
-                        ingredientsOutputString += ", " + ingredientAmountSep[1] + "g " + ingredientAmountSep[0];
+                    for (int i = 0; i < ingredientsArray.length; i++){
+                        String[] ingredientAmountSep = ingredientsArray[i].split("_");
+                        ingredientsOutputString += ingredientAmountSep[1] + "g " + ingredientAmountSep[0];
+                        if(i < ingredientsArray.length - 1){
+                            ingredientsOutputString += ", ";
+                        }
                     }
                     result.add(csvRecord.get(0) + " | Kcal: " +  csvRecord.get(1) + " | Ingredients: " + ingredientsOutputString);
                 }
@@ -119,6 +129,7 @@ class zweitesFoodfile{
     // Searches for Food item by Name and returns index of found record; -1 if not found
     public int searchFoodItem(String name)
     {
+        name = name.toLowerCase();
         // Returns all names from the csv file
         try (Reader reader = Files.newBufferedReader(path);
              @SuppressWarnings("deprecation")
@@ -129,7 +140,7 @@ class zweitesFoodfile{
             int i = 0;
             for (CSVRecord csvRecord : csvParser)
             {
-                String nameCheck = csvRecord.get("name");
+                String nameCheck = csvRecord.get("name").toLowerCase();
                 if(nameCheck.equals(name))
                 {
                     return i;
