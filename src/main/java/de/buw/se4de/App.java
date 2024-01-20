@@ -87,7 +87,6 @@ public class App extends Application {
             menuExistingLa.setFont(BTFont);
         }
 
-        //ListView<Object> menuListView = new ListView<>();{
 
 
         ListView<String> menuListView = new ListView<>();
@@ -231,6 +230,7 @@ public class App extends Application {
 
         //Oberfläche für tracking
         //Declare Content for trackingScene
+
 
         Button tracking2homeBT = new Button("Home");
         {
@@ -413,9 +413,15 @@ public class App extends Application {
 //Textfield
 
         settingsHeightTF.setOnAction(e -> {
-            ACFile.editAccount(settingsHeightTF.getText(), 1, ACData.getIndex_());
-            ACData.update_edit(ACFile, settingsNameLa, settingsHeightLa, settingsGenderLa, settingsWeightLa, settingsGoalWeightLa);
-            settingsHeightTF.setText("");
+            try {
+                float height = Float.parseFloat(settingsHeightTF.getText());
+                ACFile.editAccount(settingsHeightTF.getText(), 1, ACData.getIndex_());
+                ACData.update_edit(ACFile, settingsNameLa, settingsHeightLa, settingsGenderLa, settingsWeightLa, settingsGoalWeightLa);
+                settingsHeightTF.setText("");
+            }
+            catch(NumberFormatException n){
+                settingsHeightTF.setText("Die Eingabe muss numerisch sein.");
+            }
         });
 
         settingsNameTF.setOnAction(e -> {
@@ -425,15 +431,27 @@ public class App extends Application {
         });
 
         settingsGoalWeightTF.setOnAction(e -> {
-            ACFile.editAccount(settingsGoalWeightTF.getText(), 4, ACData.getIndex_());
-            ACData.update_edit(ACFile, settingsNameLa, settingsHeightLa, settingsGenderLa, settingsWeightLa, settingsGoalWeightLa);
-            settingsGoalWeightTF.setText("");
+            try{
+                float weight = Float.parseFloat(settingsGoalWeightTF.getText());
+                ACFile.editAccount(settingsGoalWeightTF.getText(), 4, ACData.getIndex_());
+                ACData.update_edit(ACFile,settingsNameLa, settingsHeightLa, settingsGenderLa, settingsWeightLa, settingsGoalWeightLa);
+                settingsGoalWeightTF.setText("");
+            }
+            catch(NumberFormatException n){
+                settingsGoalWeightTF.setText("Die Eingabe muss numerisch sein.");
+            }
         });
 
         settingsWeightTF.setOnAction(e -> {
-            ACFile.editAccount(settingsWeightTF.getText(), 3, ACData.getIndex_());
-            ACData.update_edit(ACFile, settingsNameLa, settingsHeightLa, settingsGenderLa, settingsWeightLa, settingsGoalWeightLa);
-            settingsWeightTF.setText("");
+            try{
+                float weight = Float.parseFloat(settingsWeightTF.getText());
+                ACFile.editAccount(settingsWeightTF.getText(), 3, ACData.getIndex_());
+                ACData.update_edit(ACFile,settingsNameLa, settingsHeightLa, settingsGenderLa, settingsWeightLa, settingsGoalWeightLa);
+                settingsWeightTF.setText("");
+            }
+            catch(NumberFormatException n){
+                settingsWeightTF.setText("Die Eingabe muss numerisch sein.");
+            }
         });
 
         recipeNewFoodTF.setOnAction(e -> {
@@ -466,8 +484,9 @@ public class App extends Application {
             int index = ACFile.searchAccount(inputValue);
             ACData.setIndex(index);
             ACData.update_account(ACFile, homeBMILa, homeNutriLa, homeStreakLa);
-            ACData.update_streak(ACFile);//////
-            ACData.update_kcal(ACFile, 0);
+
+            ACData.update_streak(ACFile);
+            ACData.update_kcal(ACFile,0);
             ACData.update_account(ACFile, homeBMILa, homeNutriLa, homeStreakLa);
         });
 
@@ -484,17 +503,22 @@ public class App extends Application {
             ACData.update_account(ACFile, homeBMILa, homeNutriLa, homeStreakLa);
         });
         trackingAddFoodBT.setOnAction(e -> {
-            float amount = Float.parseFloat(trackingAmountTF.getText());
-            String fooditem_line = trackingFoodItemLV.getSelectionModel().getSelectedItem();
-            int index = fooditem_line.indexOf(" ");
-            String fooditem = (index != -1)
-                    ? fooditem_line.substring(0, index)
-                    : fooditem_line;
-            float kcal_value = Float.parseFloat(FIFile.get_Nutritions(fooditem)) / 100;
-            System.out.println(kcal_value);
-            float consumed_amount = amount * kcal_value;
-            ACData.update_kcal(ACFile, consumed_amount);
-            trackingAmountTF.setText("");
+            try{
+                float amount = Float.parseFloat(trackingAmountTF.getText());
+                String fooditem_line = trackingFoodItemLV.getSelectionModel().getSelectedItem();
+                int index = fooditem_line.indexOf(" ");
+                String fooditem = (index != -1)
+                           ? fooditem_line.substring(0, index)
+                           : fooditem_line;
+                float kcal_value = Float.parseFloat(FIFile.get_Nutritions(fooditem))/100;
+                System.out.println(kcal_value);
+                float consumed_amount = amount * kcal_value;
+                ACData.update_kcal(ACFile, consumed_amount);
+                trackingAmountTF.setText("");
+            }
+            catch(NumberFormatException n){
+                trackingAmountTF.setText("Die Eingabe muss numerisch sein");
+            }
         });
 
         home2TrackCalories.setOnAction(e -> stage.setScene(trackingScene));//tun
