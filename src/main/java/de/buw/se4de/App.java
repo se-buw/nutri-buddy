@@ -365,7 +365,7 @@ public class App extends Application {
 
         Label recipeNewFoodLa = new Label("""
                 Add new food item in this order:
-                name, nutritional value(seperated by commas)
+                [name], [kcal per 100g] (seperated by commas)
                 this is meant for basic ingredients, not recipies""");
         {
             recipeNewFoodLa.setFont(BTFont);
@@ -375,10 +375,11 @@ public class App extends Application {
             recipeNewFoodTF.setMaxWidth(400);
         }
         Label recipeNewRecipeLa = new Label("""
-                Add new recipy in this order:
-                [name], [name of the ingredient Nr.1]-[ammount in grams], 
-                [name of the ingredient Nr.2]-[ammount in grams], ...
-                (seperated by commas)
+                Add new recipe in this order:
+                [name], [kcal per 100g of this meal],
+                [name of the ingredient Nr.1]_[ammount in grams] ...
+                (name, kcal, ingredientlist seperated by commas)
+                (ingredients seperated by blank)
                 this is meant for recipies""");
         {
             recipeNewRecipeLa.setFont(BTFont);
