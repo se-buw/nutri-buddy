@@ -14,14 +14,15 @@ class AppTest {
     private App app;
     @BeforeAll
     static void setup() {
-//setup our csv files properly
+        //setup our csv files properly
         Platform.startup(() -> {
         });
         AccountFile setupAF = new AccountFile("src/test/resources/editTest.csv");
-        String existingAccount1 = "Tom,179,male,30,80,3276.0,2023-12-10,2";
-        String existingAccount2 = "Dan,130,male,70,80,3276.0,2023-12-10,2";
-        setupAF.addAccount(existingAccount1);
-        setupAF.addAccount(existingAccount2);
+        setupAF.addAccount("Tom,179,male,30,80");
+        setupAF.addAccount("Dan,130,male,70,80");
+
+        zweitesFoodfile setupFF = new zweitesFoodfile("src/test/resources/testFoodItems.csv");
+        setupFF.addFoodItem("banana, 90");
     }
 
     @Test
@@ -68,7 +69,6 @@ class AppTest {
     void addExistingAccount() {
         AccountFile af = new AccountFile("src/test/resources/editTest.csv");
         String existingAccount = "Dan,130,male,70,80";
-        //af.addAccount(existingAccount);
         int result = af.addAccount(existingAccount);
         assertEquals(-1, result);
 
@@ -82,7 +82,6 @@ class AppTest {
         int result = af.addAccount(invalidAccountData);
         assertEquals(-1, result);
     }
-    //1 statt -1
 
 
     @Test
@@ -92,7 +91,6 @@ class AppTest {
         assertThrows(FileNotFoundException.class, () ->af.readAllAccounts("weight"));
         //assertEquals("Error, Accounts data weightnot found", result.get(0));
     }
-    //kein Error thrown
     @Test
     void readAllAccountsWrongKey(){
         AccountFile af = new AccountFile("src/test/resources/editTest.csv");
@@ -103,7 +101,6 @@ class AppTest {
         AccountFile af = new AccountFile("src/test/resources/testFoodItems.csv");
         assertThrows(IllegalArgumentException.class, () ->af.readAllAccounts("weight"));
     }
-    //Nothing was thrown
     @Test
     void addFoodItem() {
         zweitesFoodfile ff = new zweitesFoodfile("src/test/resources/testFoodItems.csv");
@@ -111,42 +108,36 @@ class AppTest {
         int result = ff.addFoodItem(foodItem);
         assertEquals(1, result);
     }
-    //kommt nichtmal zum assert fail, addFoodItem failed, weil index out of bounds
 
     //following test will fail because addFoodItem doesn't function properly
     @Test
     void readAllFoodItems() {
         zweitesFoodfile ff = new zweitesFoodfile("src/test/resources/testFoodItems.csv");
-        ff.addFoodItem("cucumber,10");
         ObservableList<String> result = ff.readAllFoodItems();
-        assertEquals("cucumber | Kcal: 10", result.get(0)); //name,nutritions,ingredients is at 0 and apple,52 is at 1.
+        assertEquals("banana | Kcal: 90", result.get(0)); //name,nutritions,ingredients is at 0 and apple,52 is at 1.
     }
-    //kommt nicht bis zu assert, addFoodItem failed
 
 
     @Test
     void searchFoodItemNotFound(){
         zweitesFoodfile ff = new zweitesFoodfile("src/test/resources/testFoodItems.csv");
-        int result = ff.searchFoodItem("Banana");
+        int result = ff.searchFoodItem("cucumber");
         assertEquals(-1, result);
     }
-    //following test will fail because addFoodItem doesn't function properly
+
     @Test
     void searchFoodItemFound(){
         zweitesFoodfile ff = new zweitesFoodfile("src/test/resources/testFoodItems.csv");
-        ff.addFoodItem("banana, 90");
+        //ff.addFoodItem("banana, 90");
         int result = ff.searchFoodItem("Banana");
-        assertEquals(1, result);
+        assertEquals(0, result);
     }
-    //kommt nicht zum assert, addFoodItem failed
 
 
-
-
-//cleanup to clear the csv files
     @AfterAll
     static void cleanup() throws FileNotFoundException {
 
+        //cleanup to clear the csv files
         String entryToKeep = "name,height,gender,weight,goal_weight,nutritions_day,login,streak";
         String foodEntryToKeep = "name,nutritions,ingredients";
         try (PrintWriter pw = new PrintWriter("src/test/resources/editTest.csv")) {
