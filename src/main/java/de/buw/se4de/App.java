@@ -129,8 +129,7 @@ public class App extends Application {
             newAccHeadlineLa.setFont(Font.font("Standard", 24));
         }
 
-        Label newAccTextLa = new Label("Add new account in this order:\n" +
-                "Name, height, gender, weight, goal weight (seperated by commas)");
+        Label newAccTextLa = new Label("Add the details of your new Account");
         {
             newAccTextLa.setFont(BTFont);
         }
@@ -150,12 +149,81 @@ public class App extends Application {
             newAccHomeMBt.setFont(BTFont);
         }
 
-        TextField newAccInputTF = new TextField();
+        Label newAccNameLA = new Label("Name:");
         {
-            newAccInputTF.setMaxWidth(400);
+            newAccNameLA.setFont(BTFont);
+        }
+        TextField newAccNameTF = new TextField();
+        {
+            newAccNameTF.setMaxWidth(400);
+            newAccNameTF.setPromptText("name");
+        }
+        Label newAccNameFailLA = new Label();
+
+        Label newAccHeightLA = new Label("Height:");
+        {
+            newAccHeightLA.setFont(BTFont);
+        }
+        TextField newAccHeightTF = new TextField();
+        {
+            newAccHeightTF.setMaxWidth(400);
+            newAccHeightTF.setPromptText("height in cm");
+        }
+        Label newAccHeightFailLA = new Label();
+
+        Label newAccGenderLA = new Label("Gender:");
+        {
+            newAccGenderLA.setFont(BTFont);
+        }
+        TextField newAccGenderTF = new TextField();
+        {
+            newAccGenderTF.setMaxWidth(400);
+            newAccGenderTF.setPromptText("gender: female or male");
+        }
+        Label newAccGenderFailLA = new Label();
+
+        Label newAccWeightLA = new Label("Weight:");
+        {
+            newAccWeightLA.setFont(BTFont);
+        }
+        TextField newAccWeightTF = new TextField();
+        {
+            newAccWeightTF.setMaxWidth(400);
+            newAccWeightTF.setPromptText("weight in kg");
+        }
+        Label newAccWeightFailLA = new Label();
+
+        Label newAccGoalWeightLA = new Label("Goal Weight:");
+        {
+            newAccGoalWeightLA.setFont(BTFont);
+        }
+        TextField newAccGoalWeightTF = new TextField();
+        {
+            newAccGoalWeightTF.setMaxWidth(400);
+            newAccGoalWeightTF.setPromptText("goal weight in kg");
+        }
+        Label newAccGoalWeightFailLA = new Label();
+
+
+        VBox newAccNameVBox = new VBox( newAccNameLA, newAccNameTF, newAccNameFailLA);
+        newAccNameVBox.setAlignment(Pos.CENTER);
+        VBox newAccGenderVBox = new VBox( newAccGenderLA, newAccGenderTF, newAccGenderFailLA);
+        newAccGenderVBox.setAlignment(Pos.CENTER);
+        VBox newAccHeightVBox = new VBox(newAccHeightLA, newAccHeightTF, newAccHeightFailLA);
+        newAccHeightVBox.setAlignment(Pos.CENTER);
+        VBox newAccWeightVBox = new VBox(newAccWeightLA, newAccWeightTF, newAccWeightFailLA);
+        newAccWeightVBox.setAlignment(Pos.CENTER);
+        VBox newAccGoalWeightVBox = new VBox(newAccGoalWeightLA, newAccGoalWeightTF, newAccGoalWeightFailLA);
+        newAccGoalWeightVBox.setAlignment(Pos.CENTER);
+
+        VBox newAccInputVBox = new VBox(5, newAccNameVBox, newAccGenderVBox, newAccHeightVBox, newAccWeightVBox, newAccGoalWeightVBox);
+
+        VBox newAccBodyVBox = new VBox(15, newAccTextLa, newAccInputVBox, newAccFailure, newAccConfirmLA, newAccHomeMBt);
+        {
+            newAccBodyVBox.setAlignment(Pos.CENTER);
         }
 
-        VBox newAccVBox = new VBox(50, newAccHeadlineLa, newAccTextLa, newAccInputTF, newAccFailure, newAccConfirmLA, newAccHomeMBt);
+        VBox newAccVBox = new VBox(50, newAccHeadlineLa, newAccBodyVBox);
         {
             newAccVBox.setAlignment(Pos.TOP_CENTER);
             newAccVBox.setTranslateY(30);
@@ -541,18 +609,74 @@ public class App extends Application {
         });
 
         newAccConfirmLA.setOnAction(e -> {
-            String inputValue = newAccInputTF.getText();
-            int status = ACFile.addAccount(inputValue);
+            newAccFailure.setText("");
+            newAccNameFailLA.setText("");
+            newAccHeightFailLA.setText("");
+            newAccGenderFailLA.setText("");
+            newAccWeightFailLA.setText("");
+            newAccGoalWeightFailLA.setText("");
 
-            if (status == -1) {
-                newAccFailure.setText("Account already exists!");
-            } else {
-                newAccFailure.setText("Added account sucessfully");
+            boolean correctInput = true;
+            try{
+                float height = Float.parseFloat(newAccHeightTF.getText());
+                if(height < 0) {
+                    newAccHeightFailLA.setText("Input must be positive");
+                    correctInput = false;
+                }
             }
-            newAccInputTF.setText("");
-            menuListView.setItems(ACFile.readAllAccounts("name"));});
+            catch(NumberFormatException n){
+                newAccHeightFailLA.setText("Input must be numeric");
+                correctInput = false;
+            }
+            try{
+                float weight = Float.parseFloat(newAccWeightTF.getText());
+                if(weight < 0) {
+                    newAccWeightFailLA.setText("Input must be positive");
+                    correctInput = false;
+                }
+            }
+            catch(NumberFormatException n){
+                newAccWeightFailLA.setText("Input must be numeric");
+                correctInput = false;
+            }
+            try{
+                float goalWeight = Float.parseFloat(newAccGoalWeightTF.getText());
+                if(goalWeight < 0) {
+                    newAccGoalWeightFailLA.setText("Input must be positive");
+                    correctInput = false;
+                }
+            }
+            catch(NumberFormatException n){
+                newAccGoalWeightFailLA.setText("Input must be numeric");
+                correctInput = false;
+            }
+            if(!(newAccGenderTF.getText().equals("male")) && !(newAccGenderTF.getText().equals("female"))){
+                newAccGenderFailLA.setText("Gender must be 'male' or 'female'");
+                correctInput = false;
+            }
 
-        newAccHomeMBt.setOnAction(e -> stage.setScene(mainMenuScene));//tun
+            if(correctInput){
+                String inputValue = newAccNameTF.getText() + "," + newAccHeightTF.getText() + "," + newAccGenderTF.getText() +"," + newAccWeightTF.getText() +"," + newAccGoalWeightTF.getText();
+                int status = ACFile.addAccount(inputValue);
+
+                if (status == -1) {
+                    newAccNameFailLA.setText("Account with that name already exists!");
+                } else {
+                    newAccNameTF.setText("");
+                    newAccHeightTF.setText("");
+                    newAccGenderTF.setText("");
+                    newAccWeightTF.setText("");
+                    newAccGoalWeightTF.setText("");
+
+                    newAccFailure.setText("Added account sucessfully");
+                }
+            }
+        });
+
+        newAccHomeMBt.setOnAction(e -> {
+            menuListView.setItems(ACFile.readAllAccounts("name"));
+            stage.setScene(mainMenuScene);
+        });//tun
 
         // Set scene
         stage.setScene(mainMenuScene);
