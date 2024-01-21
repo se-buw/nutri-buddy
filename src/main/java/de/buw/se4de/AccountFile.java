@@ -16,10 +16,6 @@ import java.util.ArrayList;
 
 
 class AccountFile{
-
-    //private /*static final*/ String accountCsvFile = "src/main/resources/accounts.csv";
-    //final Path path = Paths.get(accountCsvFile);
-
     private String accountCsvFile;
     private Path path;
 
@@ -28,11 +24,11 @@ class AccountFile{
         path = Paths.get(accountCsvFile);
     }
 
-    //Fehlermeldung bei fehlendem Account
-    public String readAccount(int index, String data)/* throws NoSuchFileException*/
+
+    public String readAccount(int index, String data)
     {
         // Returns all names from the csv file
-        String result = "Error, Account " + index + " with data " + data + "not found";
+        String result = "Error, Account " + index + " with data " + data + " not found";
         try (Reader reader = Files.newBufferedReader(path);
 
              @SuppressWarnings("deprecation")
@@ -53,7 +49,6 @@ class AccountFile{
         catch (IOException e)
         {
             e.printStackTrace();
-            //throw(new NoSuchFileException(accountCsvFile));
         }
 
         return result;
@@ -103,7 +98,7 @@ class AccountFile{
         }
         catch (IOException e)
         {
-            result.add("Error, Accounts data " + data + "not found");
+            result.add("Error, Accounts data " + data + " not found");
             e.printStackTrace();
         }
 

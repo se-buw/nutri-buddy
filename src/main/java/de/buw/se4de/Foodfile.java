@@ -14,13 +14,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Random;
 
-class FoodItemFile{
+class Foodfile {
+    private String fooditemCsvFile;
+    private Path path;
 
-    private static final String fooditemCsvFile = "src/main/resources/food_items.csv";
-    final Path path = Paths.get(fooditemCsvFile);
-
+    Foodfile(String fooditemCsvFile){
+        this.fooditemCsvFile = fooditemCsvFile;
+        path = Paths.get(fooditemCsvFile);
+    }
     public String get_Nutritions(String food) {
         String result = "";
 
@@ -31,14 +33,12 @@ class FoodItemFile{
             // Reading data from record
             for (CSVRecord csvRecord : csvParser)
             {
-                String currentFood = csvRecord.get("name");
+                String currentFood = csvRecord.get(0); // Annahme: Die Lebensmittelinformationen befinden sich in der ersten Spalte der CSV
+
                 if (currentFood.equals(food))
                 {
-                    String nutritionsValue = csvRecord.get("nutritions");
-                    if (!nutritionsValue.isEmpty()) {
-                        result = nutritionsValue;
-                    }
-                    break;
+                    result = csvRecord.get(1); // Der zweite Wert (Index 1) in der CSV-Spalte "nutritions"
+                    break; // Beenden Sie die Schleife, wenn das gewünschte Lebensmittel gefunden wurde
                 }
             }
         }
@@ -50,7 +50,6 @@ class FoodItemFile{
         return result;
     }
 
-
     public ObservableList<String> readAllFoodItems()
     {
         // Returns all names from the csv file
@@ -58,7 +57,7 @@ class FoodItemFile{
         try (Reader reader = Files.newBufferedReader(path);
              @SuppressWarnings("deprecation")
              CSVParser csvParser = new CSVParser(reader,
-                     CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());)
+                     CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim()))
         {
             // Reading data from record
             for (CSVRecord csvRecord : csvParser)
@@ -72,10 +71,12 @@ class FoodItemFile{
                     String ingredientsOutputString = "";
                     String ingredientsOneString = csvRecord.get(2);
                     String[] ingredientsArray = ingredientsOneString.split(" ");
-                    for(int i = 0; i < ingredientsArray.length; ++i)
-                    {
+                    for (int i = 0; i < ingredientsArray.length; i++){
                         String[] ingredientAmountSep = ingredientsArray[i].split("_");
-                        ingredientsOutputString += ", " + ingredientAmountSep[1] + "g " + ingredientAmountSep[0];
+                        ingredientsOutputString += ingredientAmountSep[1] + "g " + ingredientAmountSep[0];
+                        if(i < ingredientsArray.length - 1){
+                            ingredientsOutputString += ", ";
+                        }
                     }
                     result.add(csvRecord.get(0) + " | Kcal: " +  csvRecord.get(1) + " | Ingredients: " + ingredientsOutputString);
                 }
@@ -99,14 +100,13 @@ class FoodItemFile{
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.APPEND);
              @SuppressWarnings("deprecation")
              CSVPrinter csvPrinter = new CSVPrinter(writer,
-                     CSVFormat.DEFAULT.withFirstRecordAsHeader());)
+                     CSVFormat.DEFAULT.withFirstRecordAsHeader()))
         {
             foodItem = foodItem.concat(", ");
-            System.out.println(foodItem);
             // Add record after removing leading and trailing spaces
+            System.out.println(foodItem);
             String[] foodData = foodItem.split(",");
             // Adds account only if it didn't already exist
-
             if(searchFoodItem(foodData[0].strip()) == -1)
             {
                 csvPrinter.printRecord(foodData[0].strip(), foodData[1].strip(), foodData[2].strip());
@@ -124,17 +124,18 @@ class FoodItemFile{
     // Searches for Food item by Name and returns index of found record; -1 if not found
     public int searchFoodItem(String name)
     {
+        name = name.toLowerCase();
         // Returns all names from the csv file
         try (Reader reader = Files.newBufferedReader(path);
              @SuppressWarnings("deprecation")
              CSVParser csvParser = new CSVParser(reader,
-                     CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());)
+                     CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim()))
         {
             // Reading
             int i = 0;
             for (CSVRecord csvRecord : csvParser)
             {
-                String nameCheck = csvRecord.get("name");
+                String nameCheck = csvRecord.get("name").toLowerCase();
                 if(nameCheck.equals(name))
                 {
                     return i;
@@ -148,33 +149,5 @@ class FoodItemFile{
         }
 
         return (-1);
-    }
-
-    // -------------------------------------------------------------------------------------
-    // Pick a random food Fact and return the String
-    public String foodFact() {
-        // Returns all names from the csv file
-        try (Reader reader = Files.newBufferedReader(path);
-             @SuppressWarnings("deprecation")
-             CSVParser csvParser = new CSVParser(reader,
-                     CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());)
-        {
-            // Reading
-            Random rand = new Random();
-            String index = rand.nextInt(18)+1+"";
-            for (CSVRecord csvRecord : csvParser)
-            {
-                String indexCheck = csvRecord.get("index");
-                if(indexCheck.equals(index))
-                {
-                    return csvRecord.get(1)+"\n"+ "#FoodFacts";
-                }
-            }
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        return "couldnt generate a fact" ;
     }
 }

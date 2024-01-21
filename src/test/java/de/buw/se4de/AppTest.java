@@ -21,7 +21,7 @@ class AppTest {
         setupAF.addAccount("Tom,179,male,30,80");
         setupAF.addAccount("Dan,130,male,70,80");
 
-        zweitesFoodfile setupFF = new zweitesFoodfile("src/test/resources/testFoodItems.csv");
+        Foodfile setupFF = new Foodfile("src/test/resources/testFoodItems.csv");
         setupFF.addFoodItem("banana, 90");
     }
 
@@ -30,14 +30,14 @@ class AppTest {
         AccountFile af = new AccountFile("missing");
         String result = af.readAccount(0, "weight");
         //assertThrows(FileNotFoundException.class, () ->af.readAccount(0, "weight"));
-        assertEquals("Error, Account 0 with data weightnot found", result);
+        assertEquals("Error, Account 0 with data weight not found", result);
     }
 
     @Test
     void readAccountEmptyFile() {
         AccountFile af = new AccountFile("src/test/resources/empty.csv");
         String result = af.readAccount(0, "weight");
-        assertEquals("Error, Account 0 with data weightnot found", result);
+        assertEquals("Error, Account 0 with data weight not found", result);
     }
 
     @Test
@@ -86,7 +86,7 @@ class AppTest {
         AccountFile af = new AccountFile("missing");
         ObservableList<String> result = af.readAllAccounts("weight");
         //assertThrows(FileNotFoundException.class, () ->af.readAllAccounts("weight"));
-        assertEquals("Error, Accounts data weightnot found", result.get(0));
+        assertEquals("Error, Accounts data weight not found", result.get(0));
     }
     @Test
     void readAllAccountsWrongKey(){
@@ -100,7 +100,7 @@ class AppTest {
     }
     @Test
     void addFoodItem() {
-        zweitesFoodfile ff = new zweitesFoodfile("src/test/resources/testFoodItems.csv");
+        Foodfile ff = new Foodfile("src/test/resources/testFoodItems.csv");
         String foodItem = "apple,52";
         int result = ff.addFoodItem(foodItem);
         assertEquals(1, result);
@@ -108,7 +108,7 @@ class AppTest {
 
     @Test
     void readAllFoodItems() {
-        zweitesFoodfile ff = new zweitesFoodfile("src/test/resources/testFoodItems.csv");
+        Foodfile ff = new Foodfile("src/test/resources/testFoodItems.csv");
         ObservableList<String> result = ff.readAllFoodItems();
         assertEquals("banana | Kcal: 90", result.get(0)); //name,nutritions,ingredients is at 0 and apple,52 is at 1.
     }
@@ -116,14 +116,14 @@ class AppTest {
 
     @Test
     void searchFoodItemNotFound(){
-        zweitesFoodfile ff = new zweitesFoodfile("src/test/resources/testFoodItems.csv");
+        Foodfile ff = new Foodfile("src/test/resources/testFoodItems.csv");
         int result = ff.searchFoodItem("cucumber");
         assertEquals(-1, result);
     }
 
     @Test
     void searchFoodItemFound(){
-        zweitesFoodfile ff = new zweitesFoodfile("src/test/resources/testFoodItems.csv");
+        Foodfile ff = new Foodfile("src/test/resources/testFoodItems.csv");
         //ff.addFoodItem("banana, 90");
         int result = ff.searchFoodItem("Banana");
         assertEquals(0, result);
