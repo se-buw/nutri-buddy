@@ -51,7 +51,7 @@ public class App extends Application {
     private static final int 	screenSizeX = 800;
     private static final int 	screenSizeY = 700;
     Font BTFont = new Font("Standard", 16);
-    Font LAFont = new Font("Standard", 14);
+    Font LAFont = new Font("Standard", 12);
 
     // -----------------------------------------------------------------------------------
 
@@ -501,7 +501,7 @@ public class App extends Application {
 
         Label recipeNewRecipeIngLA1 = new Label("Ingredients:");
         Label recipeNewRecipeIngLA2 = new Label("Can be left empty when adding an elementary food item");
-        Label recipeNewRecipeIngLA3 = new Label("Please enter your list by separating\nthe name from the nutritional value with '_'\nthe different ingredients with ' '");
+        Label recipeNewRecipeIngLA3 = new Label("Please enter your list by separating\nthe name from the amount '_'\nthe different ingredients with ' '");
         {
             recipeNewRecipeIngLA1.setFont(BTFont);
             recipeNewRecipeIngLA2.setFont(LAFont);
@@ -510,9 +510,13 @@ public class App extends Application {
         TextField recipeNewRecipeIngTF = new TextField();
         {
             recipeNewRecipeIngTF.setMaxWidth(400);
-            recipeNewRecipeIngTF.setPromptText("[name of ingredient]_[kcal per 100g] [...");
+            recipeNewRecipeIngTF.setPromptText("[name of ingredient]_[amount in grams] [...");
         }
-        Label recipeNewRecipeIngFail = new Label();
+
+        Label recipeNewRecipeFailLA = new Label();
+        {
+            recipeNewRecipeFailLA.setFont(BTFont);
+        }
 
 
         Button recipeAddBt = new Button("Confirm");
@@ -562,12 +566,12 @@ public class App extends Application {
         {
             recipeNewRecipeKcalVBox.setAlignment(Pos.CENTER);
         }
-        VBox recipeNewRecipeIngVBox = new VBox(recipeNewRecipeIngLA1, recipeNewRecipeIngLA2, recipeNewRecipeIngLA3, recipeNewRecipeIngTF, recipeNewRecipeIngFail);
+        VBox recipeNewRecipeIngVBox = new VBox(recipeNewRecipeIngLA1, recipeNewRecipeIngLA2, recipeNewRecipeIngLA3, recipeNewRecipeIngTF);
         {
             recipeNewRecipeIngVBox.setAlignment(Pos.CENTER);
         }
 
-        VBox recipeNewRecipeInputVBox = new VBox(5, recipeNewRecipeNameVBox, recipeNewRecipeKcalVBox, recipeNewRecipeIngVBox );
+        VBox recipeNewRecipeInputVBox = new VBox(5, recipeNewRecipeNameVBox, recipeNewRecipeKcalVBox, recipeNewRecipeIngVBox ,recipeNewRecipeFailLA );
         {
             recipeNewRecipeInputVBox.setAlignment(Pos.CENTER);
         }
@@ -579,7 +583,7 @@ public class App extends Application {
         recipeVBox.setAlignment(Pos.TOP_CENTER);
         recipeVBox.setTranslateY(30);
 */
-        VBox recipeVBox = new VBox(35, recipeHeadlineLa, recipeListView, recipeNewRecipeInputVBox, recipeAddBt, recipe2homeBT);
+        VBox recipeVBox = new VBox(40, recipeHeadlineLa, recipeListView, recipeNewRecipeInputVBox, recipeAddBt, recipe2homeBT);
         recipeVBox.setAlignment(Pos.TOP_CENTER);
         recipeVBox.setTranslateY(30);
 
@@ -687,12 +691,44 @@ public class App extends Application {
         });
 
         recipeAddBt.setOnAction(e ->{
-            String inputValue = recipeNewRecipeNameTF.getText() + "," + recipeNewRecipeKcalTF.getText() + "," + recipeNewRecipeIngTF.getText();
-            FIFile.addFoodItem(inputValue);
-            recipeNewRecipeNameTF.setText("");
-            recipeNewRecipeKcalTF.setText("");
-            recipeNewRecipeIngTF.setText("");
-            recipeListView.setItems(FIFile.readAllFoodItems());
+            recipeNewRecipeFailLA.setText("");
+            recipeNewRecipeNameFail.setText("");
+            recipeNewRecipeKcalFail.setText("");
+
+            boolean correctInput = true;
+            try{
+                float kcal = Float.parseFloat(recipeNewRecipeKcalTF.getText());
+                if(kcal < 0) {
+                    recipeNewRecipeKcalFail.setText("Input must be positive");
+                    correctInput = false;
+                }
+            }
+            catch(NumberFormatException n){
+                recipeNewRecipeKcalFail.setText("Input must be numeric");
+                correctInput = false;
+            }
+
+            if(correctInput){
+
+
+                String inputValue = recipeNewRecipeNameTF.getText() + "," + recipeNewRecipeKcalTF.getText() + "," + recipeNewRecipeIngTF.getText();
+                int status = FIFile.addFoodItem(inputValue);
+                recipeNewRecipeNameTF.setText("");
+                recipeNewRecipeKcalTF.setText("");
+                recipeNewRecipeIngTF.setText("");
+                recipeListView.setItems(FIFile.readAllFoodItems());
+
+                if (status == -1) {
+                    recipeNewRecipeNameFail.setText("Food item or recipe with that name already exists!");
+                } else {
+                    recipeNewRecipeNameTF.setText("");
+                    recipeNewRecipeKcalTF.setText("");
+                    recipeNewRecipeIngTF.setText("");
+
+                    recipeNewRecipeFailLA.setText("Food item or recipe added sucessfully");
+                }
+            }
+
         });
 
         tracking2homeBT.setOnAction(e -> {
