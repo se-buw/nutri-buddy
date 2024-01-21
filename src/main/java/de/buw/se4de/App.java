@@ -51,6 +51,7 @@ public class App extends Application {
     private static final int 	screenSizeX = 800;
     private static final int 	screenSizeY = 700;
     Font BTFont = new Font("Standard", 16);
+    Font LAFont = new Font("Standard", 14);
 
     // -----------------------------------------------------------------------------------
 
@@ -331,6 +332,7 @@ public class App extends Application {
 
         TextField trackingAmountTF = new TextField();
         {
+            trackingAmountTF.setPromptText("amount of food eaten in grams");
             trackingAmountTF.setMaxWidth(400);
         }
 
@@ -435,7 +437,7 @@ public class App extends Application {
             recipeListView.setPrefHeight(100);
             recipeListView.setMaxWidth(400);
         }
-
+/*
         Label recipeNewFoodLa = new Label("""
                 Add new food item in this order:
                 [name], [kcal per 100g] (seperated by commas)
@@ -443,10 +445,81 @@ public class App extends Application {
         {
             recipeNewFoodLa.setFont(BTFont);
         }
+
         TextField recipeNewFoodTF = new TextField("");
         {
             recipeNewFoodTF.setMaxWidth(400);
         }
+
+       */
+        /*
+        Label recipeNewFoodNameLA = new Label("Name:");
+        {
+            recipeNewFoodNameLA.setFont(BTFont);
+        }
+        TextField recipeNewFoodNameTF = new TextField();
+        {
+            recipeNewFoodNameTF.setMaxWidth(400);
+            recipeNewFoodNameTF.setPromptText("name");
+        }
+        Label recipeNewFoodNameFail = new Label();
+
+        Label recipeNewFoodKcalLA = new Label("Kcal:");
+        {
+            recipeNewFoodKcalLA.setFont(BTFont);
+        }
+        TextField recipeNewFoodKcalTF = new TextField();
+        {
+            recipeNewFoodKcalTF.setMaxWidth(400);
+            recipeNewFoodKcalTF.setPromptText("kcal per 100g");
+        }
+        Label recipeNewFoodKcalFail = new Label();
+
+*/
+
+        Label recipeNewRecipeNameLA = new Label("Name:");
+        {
+            recipeNewRecipeNameLA.setFont(BTFont);
+        }
+        TextField recipeNewRecipeNameTF = new TextField();
+        {
+            recipeNewRecipeNameTF.setMaxWidth(400);
+            recipeNewRecipeNameTF.setPromptText("name");
+        }
+        Label recipeNewRecipeNameFail = new Label();
+
+        Label recipeNewRecipeKcalLA = new Label("Kcal:");
+        {
+            recipeNewRecipeKcalLA.setFont(BTFont);
+        }
+        TextField recipeNewRecipeKcalTF = new TextField();
+        {
+            recipeNewRecipeKcalTF.setMaxWidth(400);
+            recipeNewRecipeKcalTF.setPromptText("kcal per 100g");
+        }
+        Label recipeNewRecipeKcalFail = new Label();
+
+        Label recipeNewRecipeIngLA1 = new Label("Ingredients:");
+        Label recipeNewRecipeIngLA2 = new Label("Can be left empty when adding an elementary food item");
+        Label recipeNewRecipeIngLA3 = new Label("Please enter your list by separating\nthe name from the nutritional value with '_'\nthe different ingredients with ' '");
+        {
+            recipeNewRecipeIngLA1.setFont(BTFont);
+            recipeNewRecipeIngLA2.setFont(LAFont);
+            recipeNewRecipeIngLA3.setFont(LAFont);
+        }
+        TextField recipeNewRecipeIngTF = new TextField();
+        {
+            recipeNewRecipeIngTF.setMaxWidth(400);
+            recipeNewRecipeIngTF.setPromptText("[name of ingredient]_[kcal per 100g] [...");
+        }
+        Label recipeNewRecipeIngFail = new Label();
+
+
+        Button recipeAddBt = new Button("Confirm");
+        {
+            recipeAddBt.setFont(BTFont);
+        }
+        /*
         Label recipeNewRecipeLa = new Label("""
                 Add new recipe in this order:
                 [name], [kcal per 100g of this meal],
@@ -461,13 +534,52 @@ public class App extends Application {
         {
             recipeNewRecipeTF.setMaxWidth(400);
         }
-
+*/
         Button recipe2homeBT = new Button("Home Menu");
         {
             recipe2homeBT.setFont(BTFont);
         }
 
+/*
+        VBox recipeNewFoodNameVBox = new VBox(recipeNewFoodNameLA, recipeNewFoodNameTF, recipeNewFoodNameFail);
+        {
+            recipeNewFoodNameVBox.setAlignment(Pos.CENTER);
+        }
+        VBox recipeNewFoodKcalVBox = new VBox(recipeNewFoodKcalLA, recipeNewFoodKcalTF, recipeNewFoodKcalFail);
+        {
+            recipeNewFoodKcalVBox.setAlignment(Pos.CENTER);
+        }
+
+        VBox recipeNewFoodInputVBox = new VBox(5, recipeNewFoodNameVBox, recipeNewFoodKcalVBox );
+*/
+
+
+        VBox recipeNewRecipeNameVBox = new VBox(recipeNewRecipeNameLA, recipeNewRecipeNameTF, recipeNewRecipeNameFail);
+        {
+            recipeNewRecipeNameVBox.setAlignment(Pos.CENTER);
+        }
+        VBox recipeNewRecipeKcalVBox = new VBox(recipeNewRecipeKcalLA, recipeNewRecipeKcalTF, recipeNewRecipeKcalFail);
+        {
+            recipeNewRecipeKcalVBox.setAlignment(Pos.CENTER);
+        }
+        VBox recipeNewRecipeIngVBox = new VBox(recipeNewRecipeIngLA1, recipeNewRecipeIngLA2, recipeNewRecipeIngLA3, recipeNewRecipeIngTF, recipeNewRecipeIngFail);
+        {
+            recipeNewRecipeIngVBox.setAlignment(Pos.CENTER);
+        }
+
+        VBox recipeNewRecipeInputVBox = new VBox(5, recipeNewRecipeNameVBox, recipeNewRecipeKcalVBox, recipeNewRecipeIngVBox );
+        {
+            recipeNewRecipeInputVBox.setAlignment(Pos.CENTER);
+        }
+
+
+      //  HBox recipeAddingHbox = new HBox(50, recipeNewFoodInputVBox, recipeNewRecipeInputVBox);
+/*
         VBox recipeVBox = new VBox(35, recipeHeadlineLa, recipeListView, recipeNewFoodLa, recipeNewFoodTF, recipeNewRecipeLa, recipeNewRecipeTF, recipe2homeBT);
+        recipeVBox.setAlignment(Pos.TOP_CENTER);
+        recipeVBox.setTranslateY(30);
+*/
+        VBox recipeVBox = new VBox(35, recipeHeadlineLa, recipeListView, recipeNewRecipeInputVBox, recipeAddBt, recipe2homeBT);
         recipeVBox.setAlignment(Pos.TOP_CENTER);
         recipeVBox.setTranslateY(30);
 
@@ -527,6 +639,7 @@ public class App extends Application {
             }
         });
 
+        /*
         recipeNewFoodTF.setOnAction(e -> {
             FIFile.addFoodItem(recipeNewFoodTF.getText());
             recipeNewFoodTF.setText("");
@@ -537,6 +650,8 @@ public class App extends Application {
             recipeNewRecipeTF.setText("");
             recipeListView.setItems(FIFile.readAllFoodItems());
         });
+
+         */
 
 //Radiobuttons
 
@@ -569,6 +684,15 @@ public class App extends Application {
         settingsEdit2HomeBT.setOnAction(e -> {
             stage.setScene(homeScene);
             ACData.update_account(ACFile, homeBMILa, homeNutriLa, homeStreakLa);
+        });
+
+        recipeAddBt.setOnAction(e ->{
+            String inputValue = recipeNewRecipeNameTF.getText() + "," + recipeNewRecipeKcalTF.getText() + "," + recipeNewRecipeIngTF.getText();
+            FIFile.addFoodItem(inputValue);
+            recipeNewRecipeNameTF.setText("");
+            recipeNewRecipeKcalTF.setText("");
+            recipeNewRecipeIngTF.setText("");
+            recipeListView.setItems(FIFile.readAllFoodItems());
         });
 
         tracking2homeBT.setOnAction(e -> {
@@ -677,6 +801,7 @@ public class App extends Application {
             menuListView.setItems(ACFile.readAllAccounts("name"));
             stage.setScene(mainMenuScene);
         });//tun
+
 
         // Set scene
         stage.setScene(mainMenuScene);
