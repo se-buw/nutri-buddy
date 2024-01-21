@@ -584,6 +584,7 @@ public class App extends Application {
         menuLoginBt.setOnAction(e -> {
             menuLoginFailLA.setText("");
             String inputValue = menuListView.getSelectionModel().getSelectedItem();
+            //If no Listitem is selected print out warning
             if(inputValue == null){
                 menuLoginFailLA.setText("Please select an account");
             }
@@ -613,6 +614,7 @@ public class App extends Application {
             recipeNewRecipeNameFail.setText("");
             recipeNewRecipeKcalFail.setText("");
 
+            //Check for incorrect inputs
             boolean correctInput = true;
             try{
                 float kcal = Float.parseFloat(recipeNewRecipeKcalTF.getText());
@@ -626,9 +628,8 @@ public class App extends Application {
                 correctInput = false;
             }
 
+            //If the input is correct add Fooditem or recipe
             if(correctInput){
-
-
                 String inputValue = recipeNewRecipeNameTF.getText() + "," + recipeNewRecipeKcalTF.getText() + "," + recipeNewRecipeIngTF.getText();
                 int status = FIFile.addFoodItem(inputValue);
                 recipeNewRecipeNameTF.setText("");
@@ -636,6 +637,7 @@ public class App extends Application {
                 recipeNewRecipeIngTF.setText("");
                 recipeListView.setItems(FIFile.readAllFoodItems());
 
+                //If fooditem or recipe already exists print out warning otherwise proceed
                 if (status == -1) {
                     recipeNewRecipeNameFail.setText("Food item or recipe with that name already exists!");
                 } else {
@@ -687,6 +689,7 @@ public class App extends Application {
         });
 
         newAccConfirmLA.setOnAction(e -> {
+            //Reset all warnings
             newAccFailure.setText("");
             newAccNameFailLA.setText("");
             newAccHeightFailLA.setText("");
@@ -694,6 +697,7 @@ public class App extends Application {
             newAccWeightFailLA.setText("");
             newAccGoalWeightFailLA.setText("");
 
+            //Check for incorrect inputs
             boolean correctInput = true;
             try{
                 float height = Float.parseFloat(newAccHeightTF.getText());
@@ -733,10 +737,12 @@ public class App extends Application {
                 correctInput = false;
             }
 
+            //If all inputs are correct add Account
             if(correctInput){
                 String inputValue = newAccNameTF.getText() + "," + newAccHeightTF.getText() + "," + newAccGenderTF.getText() +"," + newAccWeightTF.getText() +"," + newAccGoalWeightTF.getText();
                 int status = ACFile.addAccount(inputValue);
 
+                //If Account with that name already exists print out warning, otherwise proceed
                 if (status == -1) {
                     newAccNameFailLA.setText("Account with that name already exists!");
                 } else {

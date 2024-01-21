@@ -67,7 +67,7 @@ class AccountFile{
 
             account = account + ",0,0,0";
             String[] accountData = account.split(",");
-            // Adds account only if it didn't already exist
+            // Adds account only if it didn't already exist and the input is not empty
             if(searchAccount(accountData[0].strip()) == -1 && accountData[0]!= "" && accountData[1]!= "" && accountData[2]!= "" && accountData[3]!= "" && accountData[4]!= "")
             {
                 csvPrinter.printRecord(accountData[0].strip(), accountData[1].strip(), accountData[2].strip(), accountData[3].strip(), accountData[4].strip(), accountData[5].strip(),accountData[6].strip(), accountData[7].strip());
