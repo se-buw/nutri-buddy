@@ -27,14 +27,11 @@ class AppTest {
 
     @Test
     void readAccountMissingFile() {
-
         AccountFile af = new AccountFile("missing");
-        //String result = af.readAccount(0, "weight");
-        assertThrows(FileNotFoundException.class, () ->af.readAccount(0, "weight"));
-        //assertEquals("Error, Account 0 with data weightnot found", result);
+        String result = af.readAccount(0, "weight");
+        //assertThrows(FileNotFoundException.class, () ->af.readAccount(0, "weight"));
+        assertEquals("Error, Account 0 with data weightnot found", result);
     }
-    //probleme bei dem String result und assertThrown
-    //kein Error thrown
 
     @Test
     void readAccountEmptyFile() {
@@ -78,7 +75,7 @@ class AppTest {
     @Test
     void addAccountWithInvalidData() {
         AccountFile af = new AccountFile("src/test/resources/editTest.csv");
-        String invalidAccountData = ",,,,,,,";
+        String invalidAccountData = ",,,,,";
         int result = af.addAccount(invalidAccountData);
         assertEquals(-1, result);
     }
@@ -87,9 +84,9 @@ class AppTest {
     @Test
     void readAllAccountsMissingFile(){
         AccountFile af = new AccountFile("missing");
-        //ObservableList<String> result = af.readAllAccounts("weight");
-        assertThrows(FileNotFoundException.class, () ->af.readAllAccounts("weight"));
-        //assertEquals("Error, Accounts data weightnot found", result.get(0));
+        ObservableList<String> result = af.readAllAccounts("weight");
+        //assertThrows(FileNotFoundException.class, () ->af.readAllAccounts("weight"));
+        assertEquals("Error, Accounts data weightnot found", result.get(0));
     }
     @Test
     void readAllAccountsWrongKey(){
@@ -109,7 +106,6 @@ class AppTest {
         assertEquals(1, result);
     }
 
-    //following test will fail because addFoodItem doesn't function properly
     @Test
     void readAllFoodItems() {
         zweitesFoodfile ff = new zweitesFoodfile("src/test/resources/testFoodItems.csv");
