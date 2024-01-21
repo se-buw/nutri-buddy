@@ -16,6 +16,7 @@ package de.buw.se4de;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.Axis;
 import javafx.scene.control.Button;
@@ -101,18 +102,29 @@ public class App extends Application {
         {
             menuLoginBt.setFont(BTFont);
         }
+        Label menuLoginFailLA = new Label();
+        {
+            menuLoginFailLA.setFont(BTFont);
+        }
+
+        VBox menuLoginVBox = new VBox(10, menuLoginBt, menuLoginFailLA);
+        {
+            menuLoginVBox.setAlignment(Pos.CENTER);
+        }
+
         Button menuCreateBt = new Button("Create new Account");
         {
             menuCreateBt.setFont(BTFont);
         }
 
-        HBox menuHBox = new HBox(50, menuLoginBt, menuCreateBt);
+        /*
+        HBox menuHBox = new HBox(50, menuLoginVBox, menuCreateBt);
         {
-            menuHBox.setAlignment(Pos.BOTTOM_CENTER);
+            menuHBox.setAlignment(Pos.TOP_CENTER);
             menuHBox.setTranslateY(15);
-        }
+        }*/
 
-        VBox menuVBox = new VBox(50, menuHeadlineLa, menuTextLa, menuExistingLa, menuListView, menuHBox);
+        VBox menuVBox = new VBox(50, menuHeadlineLa, menuTextLa, menuExistingLa, menuListView, menuCreateBt, menuLoginVBox);
         {
             menuVBox.setAlignment(Pos.TOP_CENTER);
             menuVBox.setTranslateY(30);
@@ -671,15 +683,22 @@ public class App extends Application {
 
 //Buttons
         menuLoginBt.setOnAction(e -> {
-            stage.setScene(homeScene);
+            menuLoginFailLA.setText("");
             String inputValue = menuListView.getSelectionModel().getSelectedItem();
-            int index = ACFile.searchAccount(inputValue);
-            ACData.setIndex(index);
-            ACData.update_account(ACFile, homeBMILa, homeNutriLa, homeStreakLa);
+            if(inputValue == null){
+                menuLoginFailLA.setText("Please select an account");
+            }
+            else{
+                stage.setScene(homeScene);
+                int index = ACFile.searchAccount(inputValue);
+                ACData.setIndex(index);
+                ACData.update_account(ACFile, homeBMILa, homeNutriLa, homeStreakLa);
 
-            ACData.update_streak(ACFile);
-            ACData.update_kcal(ACFile,0);
-            ACData.update_account(ACFile, homeBMILa, homeNutriLa, homeStreakLa);
+                ACData.update_streak(ACFile);
+                ACData.update_kcal(ACFile,0);
+                ACData.update_account(ACFile, homeBMILa, homeNutriLa, homeStreakLa);
+            }
+
         });
 
         menuCreateBt.setOnAction(e -> stage.setScene(newAccountScene));
